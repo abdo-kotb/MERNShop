@@ -9,10 +9,10 @@ import { faStar } from '@fortawesome/free-regular-svg-icons'
 interface IProps {
   value: number
   text: string
-  color: string
+  color?: string
 }
 
-const Rating: FC<IProps> = ({ value, text, color }) => {
+const Rating: FC<IProps> = ({ value, text, color = '#f8e825' }) => {
   return (
     <div className="rating">
       <span>
@@ -48,10 +48,6 @@ const Rating: FC<IProps> = ({ value, text, color }) => {
       {text && <span className="ms-1">{text}</span>}
     </div>
   )
-}
-
-Rating.defaultProps = {
-  color: '#f8e825',
 }
 
 export default Rating

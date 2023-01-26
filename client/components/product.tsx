@@ -1,7 +1,10 @@
 import { FC } from 'react'
-import { ProductsIF } from '@/products'
-import Card from 'react-bootstrap/Card'
+
 import Link from 'next/link'
+import Card from 'react-bootstrap/Card'
+
+import { ProductsIF } from '@/products'
+
 import Rating from './rating'
 
 interface IProps {
