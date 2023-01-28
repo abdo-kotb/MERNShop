@@ -3,12 +3,12 @@ import { FC } from 'react'
 import Link from 'next/link'
 import Card from 'react-bootstrap/Card'
 
-import { ProductsIF } from '@/products'
+import IProduct from '@/interfaces/Product'
 
 import Rating from './rating'
 
 interface IProps {
-  product: ProductsIF
+  product: IProduct
 }
 
 const Product: FC<IProps> = ({ product }) => {

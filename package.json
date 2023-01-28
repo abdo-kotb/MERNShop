@@ -7,14 +7,22 @@
   "scripts": {
     "start": "node server/dist/server.js",
     "dev": "concurrently \"tsc --watch\" \"nodemon -q server/dist/server.js\"",
-    "build": "tsc"
+    "build": "tsc",
+    "data:import": "node server/dist/seeders",
+    "data:destroy": "node server/dist/seeders -d"
   },
   "author": "Abdulrhman Kotb",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2"
+    "bcryptjs": "^2.4.3",
+    "colors": "^1.4.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-async-handler": "^1.2.0",
+    "mongoose": "^6.9.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.16",
     "@types/node": "^18.11.18",
     "concurrently": "^7.6.0",

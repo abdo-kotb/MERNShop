@@ -11,8 +11,11 @@ import { Container } from 'react-bootstrap'
 
 import Footer from '@/components/footer'
 import Header from '@/components/header'
+import { Provider } from 'react-redux'
+import { wrapper } from '@/store/store'
 
 export default function App({ Component, pageProps }: AppProps) {
+  const { store, props } = wrapper.useWrappedStore(pageProps)
   return (
     <>
       <Head>
@@ -23,13 +26,15 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header />
-      <main className="py-3">
-        <Container>
-          <Component {...pageProps} />
-        </Container>
-      </main>
-      <Footer />
+      <Provider store={store}>
+        <Header />
+        <main className="py-3">
+          <Container>
+            <Component {...props.pageProps} />
+          </Container>
+        </main>
+        <Footer />
+      </Provider>
     </>
   )
 }
