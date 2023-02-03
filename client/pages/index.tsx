@@ -1,17 +1,16 @@
-import { FC } from 'react'
 import Head from 'next/head'
 import { useSelector } from 'react-redux'
 
 import { AppState, wrapper } from '@/store/store'
 import { AnyAction } from '@reduxjs/toolkit'
 import IProduct from '@/interfaces/Product'
-import { getAllProducts } from '@/store/reducers/product-reducers'
 
 import { Row, Col } from 'react-bootstrap'
 
 import Product from '@/components/product'
 import Loader from '@/components/loader'
 import Message from '@/components/message'
+import { getAllProducts } from '@/store/actions/product-actions'
 
 const Home = () => {
   const { products, loading, error } = useSelector(
@@ -46,5 +45,5 @@ export default Home
 export const getStaticProps = wrapper.getStaticProps(store => async () => {
   await store.dispatch(getAllProducts() as unknown as AnyAction)
 
-  return { props: {}, revalidate: true }
+  return { props: {} }
 })

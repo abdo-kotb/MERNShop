@@ -22,33 +22,34 @@ export const productsReducer = createSlice({
   name: 'products',
   initialState: allProductsState,
   reducers: {},
-  extraReducers: {
-    [getAllProducts.pending as any]: state => {
-      console.log('ACTION PENDING')
-      return {
-        ...state,
-        loading: true,
-      }
-    },
-    [getAllProducts.fulfilled as any]: (state, action) => {
-      return {
-        ...state,
-        loading: false,
-        products: action.payload,
-      }
-    },
-    [getAllProducts.rejected as any]: (state, action) => {
-      return {
-        ...state,
-        error: action.payload,
-        loading: false,
-      }
-    },
-    [HYDRATE]: (_, action) => {
-      return {
-        ...action.payload.products,
-      }
-    },
+  extraReducers: builder => {
+    builder
+      .addCase(HYDRATE, (state, action: any) => {
+        return {
+          ...state,
+          ...action.payload.products,
+        }
+      })
+      .addCase(getAllProducts.pending, state => {
+        return {
+          ...state,
+          loading: true,
+        }
+      })
+      .addCase(getAllProducts.fulfilled, (state, action) => {
+        return {
+          ...state,
+          loading: false,
+          products: action.payload,
+        }
+      })
+      .addCase(getAllProducts.rejected, (state, action) => {
+        return {
+          ...state,
+          error: action.payload as string,
+          loading: false,
+        }
+      })
   },
 })
 
@@ -66,35 +67,33 @@ export const productDetailsReducer = createSlice({
   name: 'product',
   initialState: productInitialState,
   reducers: {},
-  extraReducers: {
-    [getProductDetails.pending as any]: state => {
-      console.log('ACTION PENDING')
-      return {
-        ...state,
-        loading: true,
-      }
-    },
-    [getProductDetails.fulfilled as any]: (state, action) => {
-      console.log('ACTION FULFILLED')
-      return {
-        ...state,
-        loading: false,
-        product: action.payload,
-      }
-    },
-    [getProductDetails.rejected as any]: (state, action) => {
-      return {
-        ...state,
-        error: action.payload,
-        loading: false,
-      }
-    },
-    [HYDRATE]: (_, action) => {
-      console.log(action)
-      return {
-        ...action.payload.product,
-      }
-    },
+  extraReducers: builder => {
+    builder
+      .addCase(HYDRATE, (state, action: any) => {
+        return {
+          ...state,
+          ...action.payload.product,
+        }
+      })
+      .addCase(getProductDetails.pending, state => {
+        return {
+          ...state,
+          loading: true,
+        }
+      })
+      .addCase(getProductDetails.fulfilled, (state, action) => {
+        return {
+          ...state,
+          loading: false,
+          product: action.payload,
+        }
+      })
+      .addCase(getProductDetails.rejected, (state, action) => {
+        return {
+          ...state,
+          error: action.payload as string,
+          loading: false,
+        }
+      })
   },
 })
-export { getAllProducts, getProductDetails }

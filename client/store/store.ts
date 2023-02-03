@@ -1,20 +1,28 @@
-import { configureStore } from '@reduxjs/toolkit'
-import { Context, createWrapper } from 'next-redux-wrapper'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import { createWrapper } from 'next-redux-wrapper'
+
+import { cartReducer } from './reducers/cart-reducers'
 import {
   productsReducer,
   productDetailsReducer,
 } from './reducers/product-reducers'
+import { userLoginReducer } from './reducers/user-reducers'
 
-const store = configureStore({
-  reducer: {
-    [productsReducer.name]: productsReducer.reducer,
-    [productDetailsReducer.name]: productDetailsReducer.reducer,
-  },
+const reducer = combineReducers({
+  [productsReducer.name]: productsReducer.reducer,
+  [productDetailsReducer.name]: productDetailsReducer.reducer,
+  [cartReducer.name]: cartReducer.reducer,
+  [userLoginReducer.name]: userLoginReducer.reducer,
+})
+
+export const store = configureStore({
+  reducer,
   devTools: process.env.NODE_ENV !== 'production',
 })
-export type AppStore = typeof store
+
+const makeStore = () => store
+
+export type AppStore = ReturnType<typeof makeStore>
 export type AppState = ReturnType<AppStore['getState']>
 
-const makeStore = (context: Context) => store
-
-export const wrapper = createWrapper(makeStore, { debug: true })
+export const wrapper = createWrapper<AppStore>(makeStore, { debug: process.env.NODE_ENV !== 'production' })

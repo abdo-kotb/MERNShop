@@ -1,10 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { ProductTypes } from '@/types/action-types'
 
 export const getAllProducts = createAsyncThunk(
-  ProductTypes.GET_ALL_PRODUCTS,
-  async (payload, { rejectWithValue }) => {
+  'getAllProducts',
+  async (_, { rejectWithValue }) => {
     try {
       const {
         data: { products },
@@ -18,7 +17,7 @@ export const getAllProducts = createAsyncThunk(
 )
 
 export const getProductDetails = createAsyncThunk(
-  ProductTypes.GET_PRODUCT,
+  'getProduct',
   async ({ id }: { id: string }, { rejectWithValue }) => {
     try {
       const {

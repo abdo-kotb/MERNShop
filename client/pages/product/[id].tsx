@@ -1,12 +1,7 @@
-import { useState } from 'react'
-import { useSelector } from 'react-redux'
-import { GetStaticPaths, GetStaticPropsContext } from 'next'
+import { useCallback, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { AnyAction } from '@reduxjs/toolkit'
-import axios from 'axios'
-import { AppState, wrapper } from '@/store/store'
-import { getProductDetails } from '@/store/reducers/product-reducers'
-
-import IProduct from '@/interfaces/Product'
+import { AppState } from '@/store/store'
 
 import Image from 'next/image'
 import Link from 'next/link'
@@ -16,21 +11,33 @@ import Rating from '@/components/rating'
 import Loader from '@/components/loader'
 import Message from '@/components/message'
 import { useRouter } from 'next/router'
+import { addToCart } from '@/store/actions/cart-actions'
+import { getProductDetails } from '@/store/actions/product-actions'
 
 const Product = () => {
-  const [qty, setQty] = useState(0)
+  const [qty, setQty] = useState(1)
+  const dispatch = useDispatch()
 
   const router = useRouter()
+  const productId = router.query.id as string
   const { product, loading, error } = useSelector(
     (state: AppState) => state.product
   )
 
-  const addToCartHandler = () => {
-    router.push({
-      pathname: `/cart/${router.query.id}`,
-      query: { qty },
-    })
-    console.log(router.query.id)
+  const dispatchProductData = useCallback(
+    async (id: string) => {
+      await dispatch(getProductDetails({ id }) as unknown as AnyAction)
+    },
+    [dispatch]
+  )
+
+  useEffect(() => {
+    if (productId) dispatchProductData(productId)
+  }, [productId, dispatchProductData])
+
+  const addToCartHandler = async () => {
+    await dispatch(addToCart({ id: productId, qty }) as unknown as AnyAction)
+    router.push('/cart')
   }
 
   return (
@@ -38,7 +45,7 @@ const Product = () => {
       <Link className="btn btn-light my-3" href="/">
         Go back
       </Link>
-      {loading ? (
+      {loading || !product.name ? (
         <Loader />
       ) : error ? (
         <Message variant="danger">{error}</Message>
@@ -126,31 +133,32 @@ const Product = () => {
   )
 }
 
-export const getStaticProps = wrapper.getStaticProps(store => async context => {
-  const {
-    params: { id },
-  } = context as GetStaticPropsContext & { params: { id: string } }
+// export const getStaticProps = wrapper.getStaticProps(store => async context => {
+//   const {
+//     params: { id },
+//   } = context as GetStaticPropsContext & { params: { id: string } }
 
-  await store.dispatch(getProductDetails({ id }) as unknown as AnyAction)
+//   await store.dispatch(getProductDetails({ id }) as unknown as AnyAction)
 
-  return {
-    props: {},
-  }
-})
+//   return {
+//     props: {},
+//   }
+// })
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const {
-    data: { products },
-  } = await axios.get(`${process.env.API_ROOT}/products`)
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   await store.dispatch(getAllProducts())
+//   const {
+//     products: { products },
+//   } = store.getState()
 
-  const paths = products.map((product: IProduct) => ({
-    params: { id: product._id },
-  }))
+//   const paths = products.map((product: IProduct) => ({
+//     params: { id: product._id },
+//   }))
 
-  return {
-    paths,
-    fallback: true,
-  }
-}
+//   return {
+//     paths,
+//     fallback: false,
+//   }
+// }
 
 export default Product

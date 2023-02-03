@@ -1,5 +1,9 @@
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
+import { Provider } from 'react-redux'
+import { HYDRATE } from 'next-redux-wrapper'
+
+import { wrapper } from '@/store/store'
 
 import '@/styles/globals.css'
 import '@/styles/bootstrap.min.css'
@@ -11,8 +15,6 @@ import { Container } from 'react-bootstrap'
 
 import Footer from '@/components/footer'
 import Header from '@/components/header'
-import { Provider } from 'react-redux'
-import { wrapper } from '@/store/store'
 
 export default function App({ Component, pageProps }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(pageProps)
