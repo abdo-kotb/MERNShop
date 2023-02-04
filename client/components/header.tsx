@@ -16,9 +16,9 @@ const Header = () => {
 
   const logoutHandler = () => dispatch(logout())
 
-  // useEffect(() => {
-  //   dispatch(getUserFromStorage())
-  // }, [dispatch])
+  useEffect(() => {
+    dispatch(getUserFromStorage())
+  }, [dispatch])
 
   return (
     <header>

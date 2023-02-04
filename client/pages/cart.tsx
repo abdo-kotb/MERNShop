@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addToCart } from '@/store/actions/cart-actions'
 import { AppState } from '@/store/store'
 import {
-  getItemsFromStorage,
+  getItemsFromCookies,
   removeItemFromCart,
 } from '@/store/reducers/cart-reducers'
 
@@ -25,11 +25,12 @@ const Cart = () => {
   const router = useRouter()
 
   useEffect(() => {
-    dispatch(getItemsFromStorage())
+    dispatch(getItemsFromCookies())
   }, [dispatch])
 
   useEffect(() => {
-    if (cartItems) itemsShowed.current = true
+    if (cartItems?.length) itemsShowed.current = true
+    console.log(cartItems)
   }, [cartItems])
 
   const removeFromCartHandler = (id: string) => {

@@ -1,12 +1,9 @@
 import { AnyAction, createAsyncThunk } from '@reduxjs/toolkit'
-import IProduct from '@/interfaces/Product'
-import axios, { AxiosResponse } from 'axios'
+import axios from 'axios'
 import CartItem from '@/interfaces/cart-item'
-import { AppState } from '@/store/store'
-import { HYDRATE } from 'next-redux-wrapper'
 import {
-  getItemsFromStorage,
-  setItemsToStorage,
+  getItemsFromCookies,
+  saveItemsToCookies,
 } from '../reducers/cart-reducers'
 
 export const addToCart = createAsyncThunk(
@@ -28,7 +25,7 @@ export const addToCart = createAsyncThunk(
         data: { product },
       } = await axios.get(`${process.env.API_ROOT}/products/${id}`)
 
-      dispatch(getItemsFromStorage())
+      dispatch(getItemsFromCookies())
 
       const cartItem = {
         product: product._id,
@@ -59,7 +56,7 @@ export const addToCart = createAsyncThunk(
           cartItems: [...cart.cartItems, cartItem],
         }
 
-      dispatch(setItemsToStorage(newItems.cartItems))
+      dispatch(saveItemsToCookies(newItems.cartItems))
       return newItems
     } catch (err: any) {
       return rejectWithValue(err.response?.data.message ?? err.message)
