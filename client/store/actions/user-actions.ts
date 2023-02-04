@@ -99,3 +99,44 @@ export const getUserProfile = createAsyncThunk(
     }
   }
 )
+
+export const updateUserProfile = createAsyncThunk(
+  'updateUserProfile',
+  async (
+    user: any,
+    {
+      rejectWithValue,
+      getState,
+      dispatch,
+    }: {
+      rejectWithValue: any
+      getState: () => any
+      dispatch: any
+    }
+  ) => {
+    try {
+      const { userInfo } = getState().userLogin
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      }
+
+      const { data: userProfile } = await axios.put(
+        `${process.env.API_ROOT}/users/profile`,
+        user,
+        config
+      )
+
+      dispatch(setUserToStorage(userProfile))
+      // @ts-ignore
+      dispatch(login.fulfilled(userProfile))
+
+      return userProfile
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data.message ?? err.message)
+    }
+  }
+)

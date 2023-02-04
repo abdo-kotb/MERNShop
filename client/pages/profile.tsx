@@ -1,6 +1,6 @@
 import Loader from '@/components/loader'
 import Message from '@/components/message'
-import { getUserProfile } from '@/store/actions/user-actions'
+import { getUserProfile, updateUserProfile } from '@/store/actions/user-actions'
 import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
 import { AnyAction } from '@reduxjs/toolkit'
@@ -16,21 +16,28 @@ const Profile = () => {
   const [name, setName] = useState('')
   const dispatch = useDispatch()
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState('')
   const router = useRouter()
   const {
     loading,
     error: reqError,
     userInfo: user,
+    updated,
   } = useSelector((state: AppState) => state.userDetails)
+  const { userInfo } = useSelector((state: AppState) => state.userLogin)
 
   useEffect(() => {
-    if (!user?.name)
+    if (!userInfo) {
+      router.push('/login')
+      return
+    }
+    if (!user?.name) {
       dispatch(getUserProfile({ id: 'profile' }) as unknown as AnyAction)
-    else {
-      setName(user.email)
+    } else {
+      setName(user.name)
       setEmail(user.email)
     }
-  }, [router, dispatch, user])
+  }, [router, dispatch, user, userInfo])
 
   useEffect(() => {
     if (reqError) setError(reqError)
@@ -39,14 +46,30 @@ const Profile = () => {
   const submitHandler = (e: FormEvent) => {
     e.preventDefault()
     if (password !== confirmPassword) setError('Passwords do not match')
-    // else dispatch() as unknown as AnyAction)
+    else
+      dispatch(
+        updateUserProfile({
+          id: user._id,
+          name,
+          email,
+          password,
+        }) as unknown as AnyAction
+      )
   }
+
+  useEffect(() => {
+    if (!updated) return
+    setSuccess('Updated Successfully')
+    const alertSuccess = setTimeout(() => setSuccess(''), 3000)
+    return () => clearTimeout(alertSuccess)
+  }, [updated])
 
   return (
     <Row>
       <Col md={3}>
         <h2>User Profile</h2>
         {error && <Message variant="danger">{error}</Message>}
+        {success && <Message variant="success">{success}</Message>}
         {loading && <Loader />}
         <Form onSubmit={submitHandler} className="mb-3">
           <Form.Group className="mb-3" controlId="name">

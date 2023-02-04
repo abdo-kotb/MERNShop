@@ -1,6 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
-import { getUserProfile, login, register } from '../actions/user-actions'
+import {
+  getUserProfile,
+  login,
+  register,
+  updateUserProfile,
+} from '../actions/user-actions'
 import Cookies from 'js-cookie'
 
 interface LoginInitialState {
@@ -95,7 +100,7 @@ export const userRegisterReducer = createSlice({
 
 export const userDetailsReducer = createSlice({
   name: 'userDetails',
-  initialState: loginInitialState,
+  initialState: { ...loginInitialState, updated: false },
   reducers: {},
   extraReducers(builder) {
     builder
@@ -115,6 +120,22 @@ export const userDetailsReducer = createSlice({
         userInfo: payload,
       }))
       .addCase(getUserProfile.rejected, (state, { payload }) => ({
+        ...state,
+        loading: false,
+        error: payload as string,
+      }))
+      .addCase(updateUserProfile.pending, state => ({
+        ...state,
+        loading: true,
+        updated: false,
+      }))
+      .addCase(updateUserProfile.fulfilled, (state, { payload }) => ({
+        ...state,
+        loading: false,
+        updated: true,
+        userInfo: payload,
+      }))
+      .addCase(updateUserProfile.rejected, (state, { payload }) => ({
         ...state,
         loading: false,
         error: payload as string,
