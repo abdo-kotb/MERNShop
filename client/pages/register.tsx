@@ -1,7 +1,7 @@
 import FormContainer from '@/components/form-container'
 import Loader from '@/components/loader'
 import Message from '@/components/message'
-import { login } from '@/store/actions/user-actions'
+import { register } from '@/store/actions/user-actions'
 import { AppState } from '@/store/store'
 import { AnyAction } from '@reduxjs/toolkit'
 import Link from 'next/link'
@@ -10,9 +10,11 @@ import { FormEvent, useEffect, useState } from 'react'
 import { Button, Col, Form, Row } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 
-const Login = () => {
+const Register = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [name, setName] = useState('')
   const dispatch = useDispatch()
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
@@ -20,26 +22,42 @@ const Login = () => {
     loading,
     error: reqError,
     userInfo,
-  } = useSelector((state: AppState) => state.userLogin)
+  } = useSelector((state: AppState) => state.userRegister)
 
   const { redirect } = router.query
 
   useEffect(() => {
-    if (userInfo) router.replace(`/${redirect ?? ''}`)
+    if (userInfo) router.push(`/${redirect ?? ''}`)
   }, [userInfo, router, redirect])
+
+  useEffect(() => {
+    if (reqError) setError(reqError)
+  }, [reqError])
 
   const submitHandler = (e: FormEvent) => {
     e.preventDefault()
-    dispatch(login({ email, password }) as unknown as AnyAction)
-    if (!userInfo) setError(reqError)
+    if (password !== confirmPassword) setError('Passwords do not match')
+    else dispatch(register({ name, email, password }) as unknown as AnyAction)
   }
 
   return (
     <FormContainer>
-      <h1>Sign In</h1>
+      <h1>Sign Up</h1>
       {error && <Message variant="danger">{error}</Message>}
       {loading && <Loader />}
       <Form onSubmit={submitHandler} className="mb-3">
+        <Form.Group className="mb-3" controlId="name">
+          <Form.Label>Name</Form.Label>
+          <Form.Control
+            type="name"
+            placeholder="Enter Name"
+            value={name}
+            onChange={e => {
+              setName(e.target.value)
+              if (error) setError(null)
+            }}
+          />
+        </Form.Group>
         <Form.Group className="mb-3" controlId="email">
           <Form.Label>Email Address</Form.Label>
           <Form.Control
@@ -64,18 +82,28 @@ const Login = () => {
             }}
           />
         </Form.Group>
+        <Form.Group className="mb-4" controlId="confirmPassword">
+          <Form.Label>Confirm Password</Form.Label>
+          <Form.Control
+            type="password"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={e => {
+              setConfirmPassword(e.target.value)
+              if (error) setError(null)
+            }}
+          />
+        </Form.Group>
         <Button type="submit" variant="primary">
-          Sign In
+          Register
         </Button>
       </Form>
 
       <Row className="py-3">
         <Col>
-          New Customer?{' '}
-          <Link
-            href={redirect ? `/register?redirect=${redirect}` : '/register'}
-          >
-            Register
+          Have an account?{' '}
+          <Link href={redirect ? `/login?redirect=${redirect}` : '/login'}>
+            Login
           </Link>
         </Col>
       </Row>
@@ -83,4 +111,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default Register

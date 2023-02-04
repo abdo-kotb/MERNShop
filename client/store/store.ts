@@ -6,13 +6,19 @@ import {
   productsReducer,
   productDetailsReducer,
 } from './reducers/product-reducers'
-import { userLoginReducer } from './reducers/user-reducers'
+import {
+  userDetailsReducer,
+  userLoginReducer,
+  userRegisterReducer,
+} from './reducers/user-reducers'
 
 const reducer = combineReducers({
   [productsReducer.name]: productsReducer.reducer,
   [productDetailsReducer.name]: productDetailsReducer.reducer,
   [cartReducer.name]: cartReducer.reducer,
   [userLoginReducer.name]: userLoginReducer.reducer,
+  [userRegisterReducer.name]: userRegisterReducer.reducer,
+  [userDetailsReducer.name]: userDetailsReducer.reducer,
 })
 
 export const store = configureStore({
@@ -25,4 +31,6 @@ const makeStore = () => store
 export type AppStore = ReturnType<typeof makeStore>
 export type AppState = ReturnType<AppStore['getState']>
 
-export const wrapper = createWrapper<AppStore>(makeStore, { debug: process.env.NODE_ENV !== 'production' })
+export const wrapper = createWrapper<AppStore>(makeStore, {
+  debug: process.env.NODE_ENV !== 'production',
+})

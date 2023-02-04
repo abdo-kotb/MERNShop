@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
-import { login } from '../actions/user-actions'
+import { getUserProfile, login, register } from '../actions/user-actions'
+import Cookies from 'js-cookie'
 
 interface LoginInitialState {
   loading: boolean
@@ -18,13 +19,24 @@ export const userLoginReducer = createSlice({
   name: 'userLogin',
   initialState: loginInitialState,
   reducers: {
-    getUserFromStorage: state => {
-      if (typeof window !== 'undefined' && localStorage.getItem('userInfo'))
-        state.userInfo = JSON.parse(localStorage.getItem('userInfo')!)
+    getUserFromStorage: (
+      state,
+      { payload }: { type: string; payload?: string }
+    ) => {
+      if (typeof window === 'undefined') {
+        state.userInfo = payload ?? null
+      } else {
+        state.userInfo = Cookies.get('userInfo')
+          ? JSON.parse(Cookies.get('userInfo')!)
+          : null
+      }
     },
     setUserToStorage: (_, { payload }) => {
-      if (typeof window !== 'undefined')
-        localStorage.setItem('userInfo', JSON.stringify(payload))
+      Cookies.set('userInfo', JSON.stringify(payload))
+    },
+    logout: state => {
+      if (typeof window !== 'undefined') Cookies.remove('userInfo')
+      state.userInfo = null
     },
   },
   extraReducers(builder) {
@@ -32,7 +44,7 @@ export const userLoginReducer = createSlice({
       .addCase(HYDRATE, (state, action: any) => {
         return {
           ...state,
-          ...action.payload.user,
+          ...action.payload.userLogin,
         }
       })
       .addCase(login.pending, state => ({
@@ -52,4 +64,63 @@ export const userLoginReducer = createSlice({
   },
 })
 
-export const { getUserFromStorage, setUserToStorage } = userLoginReducer.actions
+export const userRegisterReducer = createSlice({
+  name: 'userRegister',
+  initialState: loginInitialState,
+  reducers: {},
+  extraReducers(builder) {
+    builder
+      .addCase(HYDRATE, (state, action: any) => {
+        return {
+          ...state,
+          ...action.payload.userRegister,
+        }
+      })
+      .addCase(register.pending, state => ({
+        ...state,
+        loading: true,
+      }))
+      .addCase(register.fulfilled, (state, { payload }) => ({
+        ...state,
+        loading: false,
+        userInfo: payload,
+      }))
+      .addCase(register.rejected, (state, { payload }) => ({
+        ...state,
+        loading: false,
+        error: payload as string,
+      }))
+  },
+})
+
+export const userDetailsReducer = createSlice({
+  name: 'userDetails',
+  initialState: loginInitialState,
+  reducers: {},
+  extraReducers(builder) {
+    builder
+      .addCase(HYDRATE, (state, action: any) => {
+        return {
+          ...state,
+          ...action.payload.userDetails,
+        }
+      })
+      .addCase(getUserProfile.pending, state => ({
+        ...state,
+        loading: true,
+      }))
+      .addCase(getUserProfile.fulfilled, (state, { payload }) => ({
+        ...state,
+        loading: false,
+        userInfo: payload,
+      }))
+      .addCase(getUserProfile.rejected, (state, { payload }) => ({
+        ...state,
+        loading: false,
+        error: payload as string,
+      }))
+  },
+})
+
+export const { logout, setUserToStorage, getUserFromStorage } =
+  userLoginReducer.actions
