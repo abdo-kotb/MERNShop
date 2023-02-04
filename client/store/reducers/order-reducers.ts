@@ -1,6 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
-import { createOrder, getOrderDetails } from '../actions/order-actions'
+import {
+  createOrder,
+  getOrderDetails,
+  payOrder,
+} from '../actions/order-actions'
 
 interface CreateOrderState {
   loading: boolean
@@ -51,12 +55,14 @@ interface OrderState {
   order: any
   loading: boolean
   error: string | null
+  success: boolean
 }
 
 const orderInitialState: OrderState = {
   order: null,
   loading: false,
   error: null,
+  success: false,
 }
 
 export const orderDetailsReducer = createSlice({
@@ -80,8 +86,24 @@ export const orderDetailsReducer = createSlice({
         loading: false,
         order: payload,
         error: null,
+        success: false,
       }))
       .addCase(getOrderDetails.rejected, (state, { payload }) => ({
+        ...state,
+        loading: false,
+        error: payload as string,
+      }))
+      .addCase(payOrder.pending, state => ({
+        ...state,
+        loading: true,
+      }))
+      .addCase(payOrder.fulfilled, state => ({
+        ...state,
+        loading: false,
+        error: null,
+        success: true,
+      }))
+      .addCase(payOrder.rejected, (state, { payload }) => ({
         ...state,
         loading: false,
         error: payload as string,

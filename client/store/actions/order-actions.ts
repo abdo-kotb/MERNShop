@@ -68,3 +68,42 @@ export const getOrderDetails = createAsyncThunk(
     }
   }
 )
+
+export const payOrder = createAsyncThunk(
+  'payOrder',
+  async (
+    {
+      orderId,
+      paymentResult,
+    }: {
+      orderId: string
+      paymentResult: any
+    },
+    {
+      rejectWithValue,
+      getState,
+    }: {
+      rejectWithValue: any
+      getState: () => any
+    }
+  ) => {
+    try {
+      const { userInfo } = getState().userLogin
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      }
+
+      await axios.put(
+        `${process.env.API_ROOT}/orders/${orderId}/pay`,
+        paymentResult,
+        config
+      )
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data.message ?? err.message)
+    }
+  }
+)
