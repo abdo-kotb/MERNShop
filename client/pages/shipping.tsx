@@ -1,7 +1,10 @@
 import CheckoutSteps from '@/components/checkout-steps'
 import FormContainer from '@/components/form-container'
-import { saveShippingAddress } from '@/store/reducers/cart-reducers'
-import { AppState } from '@/store/store'
+import {
+  getShippingAddressFromCookies,
+  saveShippingAddress,
+} from '@/store/reducers/cart-reducers'
+import { AppState, wrapper } from '@/store/store'
 import { useRouter } from 'next/router'
 import { FormEvent, useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
@@ -11,8 +14,6 @@ const Shipping = () => {
   const router = useRouter()
   const dispatch = useDispatch()
   const { shippingAddress } = useSelector((state: AppState) => state.cart)
-
-  console.log(shippingAddress)
 
   const [address, setAddress] = useState(shippingAddress.address)
   const [city, setCity] = useState(shippingAddress.city)
@@ -92,3 +93,16 @@ const Shipping = () => {
 }
 
 export default Shipping
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  store =>
+    async ({ req }) => {
+      if (req.cookies.shippingAddress)
+        store.dispatch(
+          getShippingAddressFromCookies(
+            JSON.parse(req.cookies.shippingAddress!)
+          )
+        )
+      return { props: {} }
+    }
+)
