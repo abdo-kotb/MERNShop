@@ -1,25 +1,34 @@
 import CheckoutSteps from '@/components/checkout-steps'
 import Message from '@/components/message'
+import { createOrder } from '@/store/actions/order-actions'
 import {
   getItemsFromCookies,
   getPaymentMethodFromCookies,
   getShippingAddressFromCookies,
 } from '@/store/reducers/cart-reducers'
 import { AppState, wrapper } from '@/store/store'
+import { AnyAction } from '@reduxjs/toolkit'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 import { Button, Card, Col, ListGroup, Row } from 'react-bootstrap'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 const Order = () => {
+  const router = useRouter()
+  const { order, success, error } = useSelector(
+    (state: AppState) => state.createOrder
+  )
   const { cartItems, shippingAddress, paymentMethod } = useSelector(
     (state: AppState) => state.cart
   )
+  const dispatch = useDispatch()
 
   const addDecimals = (num: number) => (Math.round(num * 100) / 100).toFixed(2)
 
   const itemsPrice = addDecimals(
-    cartItems?.reduce((acc, item) => acc + item.price * +item.qty, 0)
+    cartItems.reduce((acc, item) => acc + item.price * +item.qty, 0)
   )
 
   const shippingPrice = addDecimals(+itemsPrice > 100 ? 0 : 100)
@@ -27,7 +36,23 @@ const Order = () => {
 
   const totalPrice = (+itemsPrice + +shippingPrice + +taxPrice).toFixed(2)
 
-  const placeOrderHandler = () => {}
+  useEffect(() => {
+    if (success) router.push(`/order/${order._id}`)
+  }, [success, order, router])
+
+  const placeOrderHandler = () => {
+    dispatch(
+      createOrder({
+        orderItems: cartItems,
+        shippingAddress,
+        paymentMethod,
+        itemsPrice,
+        shippingPrice,
+        taxPrice,
+        totalPrice,
+      }) as unknown as AnyAction
+    )
+  }
 
   return (
     <>
@@ -109,10 +134,15 @@ const Order = () => {
                   <Col>${totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
+              {error && (
+                <ListGroup.Item>
+                  <Message variant="danger">{error}</Message>
+                </ListGroup.Item>
+              )}
               <ListGroup.Item>
                 <Button
                   type="button"
-                  className="btn-block"
+                  className="w-100"
                   disabled={!cartItems}
                   onClick={placeOrderHandler}
                 >

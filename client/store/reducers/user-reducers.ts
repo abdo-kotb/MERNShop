@@ -60,6 +60,7 @@ export const userLoginReducer = createSlice({
         ...state,
         loading: false,
         userInfo: payload,
+        error: null,
       }))
       .addCase(login.rejected, (state, { payload }) => ({
         ...state,
@@ -89,6 +90,7 @@ export const userRegisterReducer = createSlice({
         ...state,
         loading: false,
         userInfo: payload,
+        error: null,
       }))
       .addCase(register.rejected, (state, { payload }) => ({
         ...state,
@@ -134,6 +136,7 @@ export const userDetailsReducer = createSlice({
         loading: false,
         updated: true,
         userInfo: payload,
+        error: null,
       }))
       .addCase(updateUserProfile.rejected, (state, { payload }) => ({
         ...state,

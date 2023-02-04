@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { createWrapper } from 'next-redux-wrapper'
 
 import { cartReducer } from './reducers/cart-reducers'
+import { orderCreateReducer } from './reducers/order-reducers'
 import {
   productsReducer,
   productDetailsReducer,
@@ -19,6 +20,7 @@ const reducer = combineReducers({
   [userLoginReducer.name]: userLoginReducer.reducer,
   [userRegisterReducer.name]: userRegisterReducer.reducer,
   [userDetailsReducer.name]: userDetailsReducer.reducer,
+  [orderCreateReducer.name]: orderCreateReducer.reducer,
 })
 
 export const store = configureStore({
