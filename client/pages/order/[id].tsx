@@ -52,6 +52,8 @@ const SingleOrder = () => {
 
   if (error) return <Message variant="danger">{error}</Message>
 
+  if (!order) return null
+
   return (
     <>
       <h1>Order #{orderId}</h1>
