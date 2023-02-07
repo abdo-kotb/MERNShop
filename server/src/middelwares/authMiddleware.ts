@@ -1,3 +1,4 @@
+import { NextFunction, Response } from 'express'
 import asyncHandler from 'express-async-handler'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 
@@ -31,4 +32,12 @@ const protect = asyncHandler(async (req: UserReq, res, next) => {
   }
 })
 
-export { protect }
+const isAdmin = (req: UserReq, res: Response, next: NextFunction) => {
+  if (req.user && req.user.isAdmin) next()
+  else {
+    res.status(401)
+    throw new Error('Not authorized as an admin')
+  }
+}
+
+export { protect, isAdmin }
