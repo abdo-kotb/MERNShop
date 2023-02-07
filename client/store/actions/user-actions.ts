@@ -173,3 +173,36 @@ export const getUserOrders = createAsyncThunk(
     }
   }
 )
+
+export const getUsers = createAsyncThunk(
+  'getUsers',
+  async (
+    _,
+    {
+      rejectWithValue,
+      getState,
+    }: {
+      rejectWithValue: any
+      getState: () => any
+    }
+  ) => {
+    try {
+      const { userInfo } = getState().userLogin
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      }
+
+      const { data: users } = await axios.put(
+        `${process.env.API_ROOT}/users`,
+        config
+      )
+
+      return users
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data.message ?? err.message)
+    }
+  }
+)

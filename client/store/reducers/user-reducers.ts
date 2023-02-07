@@ -3,15 +3,17 @@ import { HYDRATE } from 'next-redux-wrapper'
 import {
   getUserOrders,
   getUserProfile,
+  getUsers,
   login,
   register,
   updateUserProfile,
 } from '../actions/user-actions'
 import Cookies from 'js-cookie'
+import User from '@/interfaces/user'
 
 interface LoginInitialState {
   loading: boolean
-  userInfo: any
+  userInfo: User | null
   error: string | null
 }
 
@@ -27,7 +29,7 @@ export const userLoginReducer = createSlice({
   reducers: {
     getUserFromStorage: (
       state,
-      { payload }: { type: string; payload?: string }
+      { payload }: { type: string; payload?: User }
     ) => {
       if (typeof window === 'undefined') {
         state.userInfo = payload ?? null
@@ -102,7 +104,7 @@ export const userRegisterReducer = createSlice({
 })
 
 interface UserDetails {
-  userInfo: any
+  userInfo: User | null
   loadingInfo: boolean
   errorInfo: string | null
   updated: boolean
@@ -179,6 +181,48 @@ export const userDetailsReducer = createSlice({
         ...state,
         loadingInfo: false,
         errorInfo: payload as string,
+      }))
+  },
+})
+
+interface UsersList {
+  loading: boolean
+  users: User[]
+  error: null | string
+}
+
+const usersListState: UsersList = {
+  loading: false,
+  users: [],
+  error: null,
+}
+
+export const usersListReducer = createSlice({
+  name: 'usersList',
+  initialState: usersListState,
+  reducers: {},
+  extraReducers(builder) {
+    builder
+      .addCase(HYDRATE, (state, action: any) => {
+        return {
+          ...state,
+          ...action.payload.usersList,
+        }
+      })
+      .addCase(getUsers.pending, state => ({
+        ...state,
+        loading: true,
+      }))
+      .addCase(getUsers.fulfilled, (state, { payload }) => ({
+        ...state,
+        loading: false,
+        users: payload,
+        error: null,
+      }))
+      .addCase(getUsers.rejected, (state, { payload }) => ({
+        ...state,
+        loading: false,
+        error: payload as string,
       }))
   },
 })
