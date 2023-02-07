@@ -60,7 +60,7 @@ const Profile = () => {
     else
       dispatch(
         updateUserProfile({
-          id: user._id,
+          id: user!._id,
           name,
           email,
           password,

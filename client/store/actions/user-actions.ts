@@ -195,7 +195,7 @@ export const getUsers = createAsyncThunk(
         },
       }
 
-      const { data: users } = await axios.put(
+      const { data: users } = await axios.get(
         `${process.env.API_ROOT}/users`,
         config
       )
