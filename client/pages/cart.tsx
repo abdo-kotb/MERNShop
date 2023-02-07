@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { addToCart } from '@/store/actions/cart-actions'
-import { AppState } from '@/store/store'
+import { AppState, wrapper } from '@/store/store'
 import {
   getItemsFromCookies,
   removeItemFromCart,
@@ -17,6 +17,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { AnyAction } from '@reduxjs/toolkit'
 import Loader from '@/components/loader'
 import { useRouter } from 'next/router'
+import { getUserFromStorage } from '@/store/reducers/user-reducers'
 
 const Cart = () => {
   const { cartItems } = useSelector((state: AppState) => state.cart)
@@ -135,3 +136,12 @@ const Cart = () => {
 }
 
 export default Cart
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  store =>
+    async ({ req }) => {
+      if (req.cookies.userInfo)
+        store.dispatch(getUserFromStorage(JSON.parse(req.cookies.userInfo!)))
+      return { props: {} }
+    }
+)

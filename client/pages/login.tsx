@@ -2,11 +2,12 @@ import FormContainer from '@/components/form-container'
 import Loader from '@/components/loader'
 import Message from '@/components/message'
 import { login } from '@/store/actions/user-actions'
-import { AppState } from '@/store/store'
+import { getUserFromStorage } from '@/store/reducers/user-reducers'
+import { AppState, wrapper } from '@/store/store'
 import { AnyAction } from '@reduxjs/toolkit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import { Button, Col, Form, Row } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -23,10 +24,6 @@ const Login = () => {
   } = useSelector((state: AppState) => state.userLogin)
 
   const { redirect } = router.query
-
-  useEffect(() => {
-    if (userInfo) router.replace(`/${redirect ?? ''}`)
-  }, [userInfo, router, redirect])
 
   const submitHandler = (e: FormEvent) => {
     e.preventDefault()
@@ -84,3 +81,21 @@ const Login = () => {
 }
 
 export default Login
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  store =>
+    async ({ req, query }) => {
+      if (req.cookies.userInfo)
+        store.dispatch(getUserFromStorage(JSON.parse(req.cookies.userInfo!)))
+
+      const { userInfo } = store.getState().userLogin
+
+      if (userInfo && query.redirect) {
+        return {
+          redirect: { destination: `/${query.redirect}`, permanent: false },
+        }
+      }
+
+      return { props: {} }
+    }
+)

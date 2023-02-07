@@ -7,18 +7,13 @@ import { faShoppingCart, faUser } from '@fortawesome/free-solid-svg-icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppState } from '@/store/store'
 import { NavDropdown } from 'react-bootstrap'
-import { getUserFromStorage, logout } from '@/store/reducers/user-reducers'
-import { useEffect } from 'react'
+import { logout } from '@/store/reducers/user-reducers'
 
 const Header = () => {
   const dispatch = useDispatch()
   const { userInfo } = useSelector((state: AppState) => state.userLogin)
 
   const logoutHandler = () => dispatch(logout())
-
-  useEffect(() => {
-    dispatch(getUserFromStorage())
-  }, [dispatch])
 
   return (
     <header>

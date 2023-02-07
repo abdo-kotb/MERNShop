@@ -49,8 +49,13 @@ const Home = () => {
 
 export default Home
 
-export const getStaticProps = wrapper.getStaticProps(store => async () => {
-  await store.dispatch(getAllProducts() as unknown as AnyAction)
+export const getServerSideProps = wrapper.getServerSideProps(
+  store =>
+    async ({ req }) => {
+      if (req.cookies.userInfo)
+        store.dispatch(getUserFromStorage(JSON.parse(req.cookies.userInfo!)))
 
-  return { props: {} }
-})
+      await store.dispatch(getAllProducts() as unknown as AnyAction)
+      return { props: {} }
+    }
+)

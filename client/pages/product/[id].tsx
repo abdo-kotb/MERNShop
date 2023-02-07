@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AnyAction } from '@reduxjs/toolkit'
-import { AppState } from '@/store/store'
+import { AppState, wrapper } from '@/store/store'
 
 import Image from 'next/image'
 import Link from 'next/link'
@@ -13,6 +13,7 @@ import Message from '@/components/message'
 import { useRouter } from 'next/router'
 import { addToCart } from '@/store/actions/cart-actions'
 import { getProductDetails } from '@/store/actions/product-actions'
+import { getUserFromStorage } from '@/store/reducers/user-reducers'
 
 const Product = () => {
   const [qty, setQty] = useState(1)
@@ -117,7 +118,7 @@ const Product = () => {
                 <ListGroup.Item>
                   <Button
                     onClick={addToCartHandler}
-                    className="btn-block w-100"
+                    className="w-100"
                     type="button"
                     disabled={!product.countInStock}
                   >
@@ -133,32 +134,13 @@ const Product = () => {
   )
 }
 
-// export const getStaticProps = wrapper.getStaticProps(store => async context => {
-//   const {
-//     params: { id },
-//   } = context as GetStaticPropsContext & { params: { id: string } }
-
-//   await store.dispatch(getProductDetails({ id }) as unknown as AnyAction)
-
-//   return {
-//     props: {},
-//   }
-// })
-
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   await store.dispatch(getAllProducts())
-//   const {
-//     products: { products },
-//   } = store.getState()
-
-//   const paths = products.map((product: IProduct) => ({
-//     params: { id: product._id },
-//   }))
-
-//   return {
-//     paths,
-//     fallback: false,
-//   }
-// }
-
 export default Product
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  store =>
+    async ({ req }) => {
+      if (req.cookies.userInfo)
+        store.dispatch(getUserFromStorage(JSON.parse(req.cookies.userInfo!)))
+      return { props: {} }
+    }
+)

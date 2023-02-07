@@ -6,6 +6,7 @@ import {
   getPaymentMethodFromCookies,
   getShippingAddressFromCookies,
 } from '@/store/reducers/cart-reducers'
+import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
 import { AnyAction } from '@reduxjs/toolkit'
 import Image from 'next/image'
@@ -162,6 +163,9 @@ export default Order
 export const getServerSideProps = wrapper.getServerSideProps(
   store =>
     async ({ req }) => {
+      if (req.cookies.userInfo)
+        store.dispatch(getUserFromStorage(JSON.parse(req.cookies.userInfo!)))
+
       if (req.cookies.cartItems)
         store.dispatch(getItemsFromCookies(JSON.parse(req.cookies.cartItems!)))
       if (req.cookies.shippingAddress)

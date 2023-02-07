@@ -1,7 +1,6 @@
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { Provider } from 'react-redux'
-import { HYDRATE } from 'next-redux-wrapper'
 
 import { wrapper } from '@/store/store'
 

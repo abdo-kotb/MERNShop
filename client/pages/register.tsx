@@ -2,7 +2,8 @@ import FormContainer from '@/components/form-container'
 import Loader from '@/components/loader'
 import Message from '@/components/message'
 import { register } from '@/store/actions/user-actions'
-import { AppState } from '@/store/store'
+import { getUserFromStorage } from '@/store/reducers/user-reducers'
+import { AppState, wrapper } from '@/store/store'
 import { AnyAction } from '@reduxjs/toolkit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -112,3 +113,21 @@ const Register = () => {
 }
 
 export default Register
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  store =>
+    async ({ req, query }) => {
+      if (req.cookies.userInfo)
+        store.dispatch(getUserFromStorage(JSON.parse(req.cookies.userInfo!)))
+
+      const { userInfo } = store.getState().userLogin
+
+      if (userInfo && query.redirect) {
+        return {
+          redirect: { destination: `/${query.redirect}`, permanent: false },
+        }
+      }
+
+      return { props: {} }
+    }
+)

@@ -4,6 +4,7 @@ import {
   getShippingAddressFromCookies,
   savePaymentMethod,
 } from '@/store/reducers/cart-reducers'
+import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
 import { useRouter } from 'next/router'
 import { FormEvent, useState } from 'react'
@@ -56,6 +57,9 @@ export default Payment
 export const getServerSideProps = wrapper.getServerSideProps(
   store =>
     async ({ req }) => {
+      if (req.cookies.userInfo)
+        store.dispatch(getUserFromStorage(JSON.parse(req.cookies.userInfo!)))
+
       if (req.cookies.shippingAddress)
         store.dispatch(
           getShippingAddressFromCookies(

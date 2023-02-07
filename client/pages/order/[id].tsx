@@ -5,18 +5,39 @@ import { getOrderDetails } from '@/store/actions/order-actions'
 import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
 import { AnyAction } from '@reduxjs/toolkit'
+import axios from 'axios'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Button, Card, Col, ListGroup, Row } from 'react-bootstrap'
-import { useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
+import { Card, Col, ListGroup, Row } from 'react-bootstrap'
+import { PayPalScriptProvider } from '@paypal/react-paypal-js'
+import { useDispatch, useSelector } from 'react-redux'
+import PayPalButton from '@/components/paypal-button'
 
 const SingleOrder = () => {
   const router = useRouter()
+  const dispatch = useDispatch()
   const orderId = router.query.id
-  const { loading, order, error } = useSelector(
+  const { loading, order, error, success, processingPay } = useSelector(
     (state: AppState) => state.orderDetails
   )
+  const [clientId, setClientId] = useState('')
+
+  useEffect(() => {
+    const setPayPalID = async () => {
+      const { data: id } = await axios.get(
+        `${process.env.API_ROOT}/config/paypal`
+      )
+      setClientId(id)
+    }
+
+    if (!order || success)
+      dispatch(getOrderDetails(orderId as string) as unknown as AnyAction)
+    else if (!order.isPaid) {
+      if (!window.paypal) setPayPalID()
+    }
+  }, [dispatch, success, orderId, order])
 
   const addDecimals = (num: number) => (Math.round(num * 100) / 100).toFixed(2)
 
@@ -54,7 +75,7 @@ const SingleOrder = () => {
               </p>
               {order.isDelivered ? (
                 <Message variant="success">
-                  Delivered on ${order.deliveredAt}
+                  Delivered on {new Date(order.deliveredAt).toLocaleString()}
                 </Message>
               ) : (
                 <Message variant="danger">Not delivered</Message>
@@ -67,7 +88,9 @@ const SingleOrder = () => {
                 {order.paymentMethod}
               </p>
               {order.isPaid ? (
-                <Message variant="success">Paid on ${order.paidAt}</Message>
+                <Message variant="success">
+                  Paid on {new Date(order.paidAt).toLocaleString()}
+                </Message>
               ) : (
                 <Message variant="danger">Not paid</Message>
               )}
@@ -135,6 +158,18 @@ const SingleOrder = () => {
                   <Col>${order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
+              {!order.isPaid && (
+                <ListGroup.Item className="mt-3">
+                  {processingPay && <Loader />}
+                  {!clientId ? (
+                    <Loader />
+                  ) : (
+                    <PayPalScriptProvider options={{ 'client-id': clientId }}>
+                      <PayPalButton totalPrice={order.totalPrice} />
+                    </PayPalScriptProvider>
+                  )}
+                </ListGroup.Item>
+              )}
             </ListGroup>
           </Card>
         </Col>

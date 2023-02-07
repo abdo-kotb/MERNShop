@@ -56,6 +56,7 @@ interface OrderState {
   loading: boolean
   error: string | null
   success: boolean
+  processingPay: boolean
 }
 
 const orderInitialState: OrderState = {
@@ -63,6 +64,7 @@ const orderInitialState: OrderState = {
   loading: false,
   error: null,
   success: false,
+  processingPay: false,
 }
 
 export const orderDetailsReducer = createSlice({
@@ -95,11 +97,11 @@ export const orderDetailsReducer = createSlice({
       }))
       .addCase(payOrder.pending, state => ({
         ...state,
-        loading: true,
+        processingPay: true,
       }))
       .addCase(payOrder.fulfilled, state => ({
         ...state,
-        loading: false,
+        processingPay: false,
         error: null,
         success: true,
       }))
