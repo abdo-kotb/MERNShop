@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
 import {
+  getUserOrders,
   getUserProfile,
   login,
   register,
@@ -100,9 +101,29 @@ export const userRegisterReducer = createSlice({
   },
 })
 
+interface UserDetails {
+  userInfo: any
+  loadingInfo: boolean
+  errorInfo: string | null
+  updated: boolean
+  orders: any[]
+  loadingOrders: boolean
+  errorOrders: string | null
+}
+
+const userDetailsState: UserDetails = {
+  userInfo: null,
+  loadingInfo: false,
+  errorInfo: null,
+  updated: false,
+  orders: [],
+  loadingOrders: false,
+  errorOrders: null,
+}
+
 export const userDetailsReducer = createSlice({
   name: 'userDetails',
-  initialState: { ...loginInitialState, updated: false },
+  initialState: userDetailsState,
   reducers: {},
   extraReducers(builder) {
     builder
@@ -114,34 +135,50 @@ export const userDetailsReducer = createSlice({
       })
       .addCase(getUserProfile.pending, state => ({
         ...state,
-        loading: true,
+        loadingInfo: true,
       }))
       .addCase(getUserProfile.fulfilled, (state, { payload }) => ({
         ...state,
-        loading: false,
+        loadingInfo: false,
         userInfo: payload,
+        errorInfo: null,
       }))
       .addCase(getUserProfile.rejected, (state, { payload }) => ({
         ...state,
-        loading: false,
-        error: payload as string,
+        loadingInfo: false,
+        errorInfo: payload as string,
+      }))
+      .addCase(getUserOrders.pending, state => ({
+        ...state,
+        loadingOrders: true,
+      }))
+      .addCase(getUserOrders.fulfilled, (state, { payload }) => ({
+        ...state,
+        loadingOrders: false,
+        orders: payload,
+        errorOrders: null,
+      }))
+      .addCase(getUserOrders.rejected, (state, { payload }) => ({
+        ...state,
+        loadingOrders: false,
+        errorOrders: payload as string,
       }))
       .addCase(updateUserProfile.pending, state => ({
         ...state,
-        loading: true,
+        loadingInfo: true,
         updated: false,
       }))
       .addCase(updateUserProfile.fulfilled, (state, { payload }) => ({
         ...state,
-        loading: false,
+        loadingInfo: false,
         updated: true,
         userInfo: payload,
-        error: null,
+        errorInfo: null,
       }))
       .addCase(updateUserProfile.rejected, (state, { payload }) => ({
         ...state,
-        loading: false,
-        error: payload as string,
+        loadingInfo: false,
+        errorInfo: payload as string,
       }))
   },
 })

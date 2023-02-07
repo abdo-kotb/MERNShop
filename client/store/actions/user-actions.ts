@@ -140,3 +140,36 @@ export const updateUserProfile = createAsyncThunk(
     }
   }
 )
+
+export const getUserOrders = createAsyncThunk(
+  'getUserOrders',
+  async (
+    _,
+    {
+      rejectWithValue,
+      getState,
+    }: {
+      rejectWithValue: any
+      getState: () => any
+    }
+  ) => {
+    try {
+      const { userInfo } = getState().userLogin
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      }
+
+      const { data: orders } = await axios.get(
+        `${process.env.API_ROOT}/orders/my-orders`,
+        config
+      )
+
+      return orders
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data.message ?? err.message)
+    }
+  }
+)

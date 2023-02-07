@@ -2,12 +2,12 @@ import FormContainer from '@/components/form-container'
 import Loader from '@/components/loader'
 import Message from '@/components/message'
 import { login } from '@/store/actions/user-actions'
-import { getUserFromStorage } from '@/store/reducers/user-reducers'
+import { getUserFromStorage, logout } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
 import { AnyAction } from '@reduxjs/toolkit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { Button, Col, Form, Row } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -24,6 +24,10 @@ const Login = () => {
   } = useSelector((state: AppState) => state.userLogin)
 
   const { redirect } = router.query
+
+  useEffect(() => {
+    if (userInfo) router.replace(`/${redirect ?? ''}`)
+  }, [userInfo, router, redirect])
 
   const submitHandler = (e: FormEvent) => {
     e.preventDefault()
@@ -87,6 +91,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     async ({ req, query }) => {
       if (req.cookies.userInfo)
         store.dispatch(getUserFromStorage(JSON.parse(req.cookies.userInfo!)))
+      else store.dispatch(logout())
 
       const { userInfo } = store.getState().userLogin
 

@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import { AppState, wrapper } from '@/store/store'
 import { AnyAction } from '@reduxjs/toolkit'
@@ -12,17 +12,11 @@ import Loader from '@/components/loader'
 import Message from '@/components/message'
 import { getAllProducts } from '@/store/actions/product-actions'
 import { getUserFromStorage } from '@/store/reducers/user-reducers'
-import { useEffect } from 'react'
 
 const Home = () => {
   const { products, loading, error } = useSelector(
     (state: AppState) => state.products
   )
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(getUserFromStorage())
-  }, [dispatch])
 
   return (
     <>

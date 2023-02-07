@@ -1,12 +1,19 @@
 import Loader from '@/components/loader'
 import Message from '@/components/message'
-import { getUserProfile, updateUserProfile } from '@/store/actions/user-actions'
+import {
+  getUserOrders,
+  getUserProfile,
+  updateUserProfile,
+} from '@/store/actions/user-actions'
 import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { AnyAction } from '@reduxjs/toolkit'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FormEvent, useEffect, useState } from 'react'
-import { Button, Col, Form, Row } from 'react-bootstrap'
+import { Button, Col, Form, Row, Table } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 
 const Profile = () => {
@@ -19,10 +26,13 @@ const Profile = () => {
   const [success, setSuccess] = useState('')
   const router = useRouter()
   const {
-    loading,
-    error: reqError,
+    loadingInfo,
+    errorInfo: reqError,
     userInfo: user,
     updated,
+    orders,
+    loadingOrders,
+    errorOrders,
   } = useSelector((state: AppState) => state.userDetails)
   const { userInfo } = useSelector((state: AppState) => state.userLogin)
 
@@ -33,6 +43,7 @@ const Profile = () => {
     }
     if (!user?.name) {
       dispatch(getUserProfile({ id: 'profile' }) as unknown as AnyAction)
+      dispatch(getUserOrders() as unknown as AnyAction)
     } else {
       setName(user.name)
       setEmail(user.email)
@@ -70,7 +81,7 @@ const Profile = () => {
         <h2>User Profile</h2>
         {error && <Message variant="danger">{error}</Message>}
         {success && <Message variant="success">{success}</Message>}
-        {loading && <Loader />}
+        {loadingInfo && <Loader />}
         <Form onSubmit={submitHandler} className="mb-3">
           <Form.Group className="mb-3" controlId="name">
             <Form.Label>Name</Form.Label>
@@ -127,6 +138,57 @@ const Profile = () => {
       </Col>
       <Col md={9}>
         <h2>My orders</h2>
+        {loadingOrders ? (
+          <Loader />
+        ) : errorOrders ? (
+          <Message variant="danger">{errorOrders}</Message>
+        ) : (
+          <Table striped bordered hover responsive className="table-sm">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>DATE</th>
+                <th>TOTAL</th>
+                <th>PAID</th>
+                <th>DELIVERED</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((order, index) => (
+                <tr key={order._id}>
+                  <td>{order._id}</td>
+                  <td>{new Date(order.careatedAt).toLocaleDateString()}</td>
+                  <td>{order.totalPrice}</td>
+                  <td>
+                    {order.isPaid ? (
+                      new Date(order.paidAt).toLocaleDateString()
+                    ) : (
+                      <FontAwesomeIcon icon={faTimes} color="red" />
+                    )}
+                  </td>
+                  <td>
+                    {order.isDeliveredAt ? (
+                      new Date(order.deliveredAt).toLocaleDateString()
+                    ) : (
+                      <FontAwesomeIcon icon={faTimes} color="red" />
+                    )}
+                  </td>
+                  <td>
+                    <Link href={`/order/${encodeURIComponent(order._id)}`}>
+                      <Button
+                        className="btn-sm"
+                        variant={index % 2 === 0 ? 'light' : 'dark'}
+                      >
+                        Details
+                      </Button>
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
       </Col>
     </Row>
   )

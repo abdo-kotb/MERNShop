@@ -43,7 +43,6 @@ export const cartReducer = createSlice({
       }
     },
     saveItemsToCookies: (_, { payload }) => {
-      console.log(payload)
       Cookies.set('cartItems', JSON.stringify(payload))
     },
     removeItemFromCart: (state, { payload }) => {
