@@ -58,3 +58,37 @@ export const deleteProduct = createAsyncThunk(
     }
   }
 )
+
+export const createProduct = createAsyncThunk(
+  'createProduct',
+  async (
+    _,
+    {
+      rejectWithValue,
+      getState,
+    }: {
+      rejectWithValue: any
+      getState: () => any
+    }
+  ) => {
+    try {
+      const { userInfo } = getState().userLogin
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      }
+
+      const { data: product } = await axios.post(
+        `${process.env.API_ROOT}/products`,
+        {},
+        config
+      )
+
+      return product
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data.message ?? err.message)
+    }
+  }
+)

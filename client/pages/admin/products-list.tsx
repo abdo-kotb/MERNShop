@@ -2,7 +2,11 @@ import Loader from '@/components/loader'
 import Message from '@/components/message'
 import IProduct from '@/interfaces/Product'
 import User from '@/interfaces/user'
-import { deleteProduct, getAllProducts } from '@/store/actions/product-actions'
+import {
+  createProduct,
+  deleteProduct,
+  getAllProducts,
+} from '@/store/actions/product-actions'
 import { getUserFromStorage, logout } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
 import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
@@ -25,6 +29,11 @@ const ProductsList = () => {
     error: errorDelete,
     success: successDelete,
   } = useSelector((state: AppState) => state.deleteProduct)
+  const {
+    loading: loadingCreate,
+    error: errorCreate,
+    product,
+  } = useSelector((state: AppState) => state.createProduct)
   const { userInfo } = useSelector((state: AppState) => state.userLogin)
 
   useEffect(() => {
@@ -32,14 +41,17 @@ const ProductsList = () => {
   }, [router, userInfo])
 
   useEffect(() => {
-    dispatch(getAllProducts() as unknown as AnyAction)
-  }, [dispatch, successDelete])
+    if (product?._id) router.push(`/admin/product/${product._id}/edit`)
+    else dispatch(getAllProducts() as unknown as AnyAction)
+  }, [dispatch, successDelete, product, router])
 
   const deleteHandler = (id: IProduct['_id']) => {
     dispatch(deleteProduct(id) as unknown as AnyAction)
   }
 
-  const createProductHandler = () => {}
+  const createProductHandler = () => {
+    dispatch(createProduct() as unknown as AnyAction)
+  }
 
   return (
     <>
@@ -53,8 +65,9 @@ const ProductsList = () => {
           </Button>
         </Col>
       </Row>
-      {loadingDelete && <Loader />}
+      {(loadingDelete || loadingCreate) && <Loader />}
       {errorDelete && <Message variant="danger">{errorDelete}</Message>}
+      {errorCreate && <Message variant="danger">{errorCreate}</Message>}
       {loading ? (
         <Loader />
       ) : error ? (

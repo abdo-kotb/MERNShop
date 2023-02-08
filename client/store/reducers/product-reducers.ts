@@ -2,6 +2,7 @@ import IProduct from '@/interfaces/Product'
 import { createSlice } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
 import {
+  createProduct,
   deleteProduct,
   getAllProducts,
   getProductDetails,
@@ -142,6 +143,42 @@ export const productDeleteReducer = createSlice({
         }
       })
       .addCase(deleteProduct.rejected, (state, action) => {
+        return {
+          ...state,
+          error: action.payload as string,
+          loading: false,
+        }
+      })
+  },
+})
+
+export const productCreateReducer = createSlice({
+  name: 'createProduct',
+  initialState: productInitialState,
+  reducers: {},
+  extraReducers: builder => {
+    builder
+      .addCase(HYDRATE, (state, action: any) => {
+        return {
+          ...state,
+          ...action.payload.createProduct,
+        }
+      })
+      .addCase(createProduct.pending, state => {
+        return {
+          ...state,
+          loading: true,
+        }
+      })
+      .addCase(createProduct.fulfilled, (state, action) => {
+        return {
+          ...state,
+          loading: false,
+          product: action.payload,
+          error: null,
+        }
+      })
+      .addCase(createProduct.rejected, (state, action) => {
         return {
           ...state,
           error: action.payload as string,
