@@ -71,7 +71,7 @@ const UsersList = () => {
                   )}
                 </td>
                 <td>
-                  <Link href={`/user/${user._id}/edit`}>
+                  <Link href={`/user/${encodeURIComponent(user._id)}/edit`}>
                     <Button variant="light" className="btn-sm">
                       <FontAwesomeIcon icon={faEdit} />
                     </Button>
