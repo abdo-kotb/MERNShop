@@ -9,6 +9,7 @@ import {
 import {
   productsReducer,
   productDetailsReducer,
+  productDeleteReducer,
 } from './reducers/product-reducers'
 import {
   userDeleteReducer,
@@ -21,14 +22,15 @@ import {
 const reducer = combineReducers({
   [productsReducer.name]: productsReducer.reducer,
   [productDetailsReducer.name]: productDetailsReducer.reducer,
+  [productDeleteReducer.name]: productDeleteReducer.reducer,
   [cartReducer.name]: cartReducer.reducer,
   [userLoginReducer.name]: userLoginReducer.reducer,
   [userRegisterReducer.name]: userRegisterReducer.reducer,
   [userDetailsReducer.name]: userDetailsReducer.reducer,
-  [orderCreateReducer.name]: orderCreateReducer.reducer,
-  [orderDetailsReducer.name]: orderDetailsReducer.reducer,
   [usersListReducer.name]: usersListReducer.reducer,
   [userDeleteReducer.name]: userDeleteReducer.reducer,
+  [orderCreateReducer.name]: orderCreateReducer.reducer,
+  [orderDetailsReducer.name]: orderDetailsReducer.reducer,
 })
 
 export const store = configureStore({

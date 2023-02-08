@@ -1,7 +1,8 @@
 import Loader from '@/components/loader'
 import Message from '@/components/message'
+import IProduct from '@/interfaces/Product'
 import User from '@/interfaces/user'
-import { getAllProducts } from '@/store/actions/product-actions'
+import { deleteProduct, getAllProducts } from '@/store/actions/product-actions'
 import { getUserFromStorage, logout } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
 import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
@@ -19,6 +20,11 @@ const ProductsList = () => {
   const { products, loading, error } = useSelector(
     (state: AppState) => state.products
   )
+  const {
+    loading: loadingDelete,
+    error: errorDelete,
+    success: successDelete,
+  } = useSelector((state: AppState) => state.deleteProduct)
   const { userInfo } = useSelector((state: AppState) => state.userLogin)
 
   useEffect(() => {
@@ -27,10 +33,10 @@ const ProductsList = () => {
 
   useEffect(() => {
     dispatch(getAllProducts() as unknown as AnyAction)
-  }, [dispatch])
+  }, [dispatch, successDelete])
 
-  const deleteHandler = (id: User['_id']) => {
-    dispatch(deleteProducts(id) as unknown as AnyAction)
+  const deleteHandler = (id: IProduct['_id']) => {
+    dispatch(deleteProduct(id) as unknown as AnyAction)
   }
 
   const createProductHandler = () => {}
@@ -47,6 +53,8 @@ const ProductsList = () => {
           </Button>
         </Col>
       </Row>
+      {loadingDelete && <Loader />}
+      {errorDelete && <Message variant="danger">{errorDelete}</Message>}
       {loading ? (
         <Loader />
       ) : error ? (

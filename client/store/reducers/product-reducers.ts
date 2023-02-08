@@ -1,7 +1,11 @@
 import IProduct from '@/interfaces/Product'
 import { createSlice } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
-import { getAllProducts, getProductDetails } from '../actions/product-actions'
+import {
+  deleteProduct,
+  getAllProducts,
+  getProductDetails,
+} from '../actions/product-actions'
 
 interface CommonState {
   loading: boolean
@@ -89,6 +93,55 @@ export const productDetailsReducer = createSlice({
         }
       })
       .addCase(getProductDetails.rejected, (state, action) => {
+        return {
+          ...state,
+          error: action.payload as string,
+          loading: false,
+        }
+      })
+  },
+})
+
+interface ProductDelete {
+  loading: boolean
+  error: string | null
+  success: boolean
+}
+
+const deleteProductState: ProductDelete = {
+  loading: false,
+  error: null,
+  success: false,
+}
+
+export const productDeleteReducer = createSlice({
+  name: 'deleteProduct',
+  initialState: deleteProductState,
+  reducers: {},
+  extraReducers: builder => {
+    builder
+      .addCase(HYDRATE, (state, action: any) => {
+        return {
+          ...state,
+          ...action.payload.deleteProduct,
+        }
+      })
+      .addCase(deleteProduct.pending, state => {
+        return {
+          ...state,
+          loading: true,
+          success: false,
+        }
+      })
+      .addCase(deleteProduct.fulfilled, state => {
+        return {
+          ...state,
+          loading: false,
+          error: null,
+          success: true,
+        }
+      })
+      .addCase(deleteProduct.rejected, (state, action) => {
         return {
           ...state,
           error: action.payload as string,
