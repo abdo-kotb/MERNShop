@@ -1,7 +1,7 @@
 import Loader from '@/components/loader'
 import Message from '@/components/message'
 import User from '@/interfaces/user'
-import { getUsers } from '@/store/actions/user-actions'
+import { deleteUser, getUsers } from '@/store/actions/user-actions'
 import { getUserFromStorage, logout } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
 import {
@@ -31,10 +31,13 @@ const UsersList = () => {
   }, [router, userInfo])
 
   useEffect(() => {
-    if (!users.length) dispatch(getUsers() as unknown as AnyAction)
-  }, [dispatch, users])
+    dispatch(getUsers() as unknown as AnyAction)
+  }, [dispatch])
 
-  const deleteHandler = (id: User['_id']) => {}
+  const deleteHandler = async (id: User['_id']) => {
+    await dispatch(deleteUser(id) as unknown as AnyAction)
+    await dispatch(getUsers() as unknown as AnyAction)
+  }
 
   return (
     <>

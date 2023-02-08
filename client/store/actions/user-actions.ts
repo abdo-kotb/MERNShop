@@ -206,3 +206,31 @@ export const getUsers = createAsyncThunk(
     }
   }
 )
+
+export const deleteUser = createAsyncThunk(
+  'deleteUser',
+  async (
+    id: string,
+    {
+      rejectWithValue,
+      getState,
+    }: {
+      rejectWithValue: any
+      getState: () => any
+    }
+  ) => {
+    try {
+      const { userInfo } = getState().userLogin
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      }
+
+      await axios.delete(`${process.env.API_ROOT}/users/${id}`, config)
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data.message ?? err.message)
+    }
+  }
+)

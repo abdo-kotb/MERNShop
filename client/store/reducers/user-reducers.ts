@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
 import {
+  deleteUser,
   getUserOrders,
   getUserProfile,
   getUsers,
@@ -222,6 +223,35 @@ export const usersListReducer = createSlice({
       .addCase(getUsers.rejected, (state, { payload }) => ({
         ...state,
         loading: false,
+        error: payload as string,
+      }))
+  },
+})
+
+export const userDeleteReducer = createSlice({
+  name: 'deleteUser',
+  initialState: { success: false },
+  reducers: {},
+  extraReducers(builder) {
+    builder
+      .addCase(HYDRATE, (state, action: any) => {
+        return {
+          ...state,
+          ...action.payload.usersList,
+        }
+      })
+      .addCase(deleteUser.pending, state => ({
+        ...state,
+        success: false,
+      }))
+      .addCase(deleteUser.fulfilled, state => ({
+        ...state,
+        success: true,
+        error: null,
+      }))
+      .addCase(deleteUser.rejected, (state, { payload }) => ({
+        ...state,
+        success: false,
         error: payload as string,
       }))
   },

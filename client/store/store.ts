@@ -11,6 +11,7 @@ import {
   productDetailsReducer,
 } from './reducers/product-reducers'
 import {
+  userDeleteReducer,
   userDetailsReducer,
   userLoginReducer,
   userRegisterReducer,
@@ -27,6 +28,7 @@ const reducer = combineReducers({
   [orderCreateReducer.name]: orderCreateReducer.reducer,
   [orderDetailsReducer.name]: orderDetailsReducer.reducer,
   [usersListReducer.name]: usersListReducer.reducer,
+  [userDeleteReducer.name]: userDeleteReducer.reducer,
 })
 
 export const store = configureStore({
