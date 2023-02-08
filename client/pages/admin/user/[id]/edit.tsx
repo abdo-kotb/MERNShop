@@ -1,7 +1,7 @@
 import FormContainer from '@/components/form-container'
 import Loader from '@/components/loader'
 import Message from '@/components/message'
-import { getUser } from '@/store/actions/user-actions'
+import { getUser, updateUser } from '@/store/actions/user-actions'
 import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
 import { AnyAction } from '@reduxjs/toolkit'
@@ -19,22 +19,30 @@ const EditUser = () => {
   const dispatch = useDispatch()
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-  const userId = router.query.id
+  const userId = router.query.id as string
   const {
     userInfo,
     loadingInfo,
-    errorInfo: reqError,
+    errorInfo,
+    updated,
+    loadingUpdate,
+    errorUpdate: reqError,
   } = useSelector((state: AppState) => state.userDetails)
 
   useEffect(() => {
+    if (updated) {
+      router.push('/admin/users-list')
+      return
+    }
+
     if (!userInfo?.name || userInfo?._id !== userId) {
-      dispatch(getUser({ id: userId as string }) as unknown as AnyAction)
+      dispatch(getUser({ id: userId }) as unknown as AnyAction)
     } else {
       setName(userInfo.name)
       setEmail(userInfo.email)
       setIsAdmin(userInfo.isAdmin)
     }
-  }, [userId, userInfo, dispatch])
+  }, [userId, userInfo, dispatch, updated, router])
 
   useEffect(() => {
     if (reqError) setError(reqError)
@@ -42,6 +50,9 @@ const EditUser = () => {
 
   const submitHandler = (e: FormEvent) => {
     e.preventDefault()
+    dispatch(
+      updateUser({ _id: userId, name, email, isAdmin }) as unknown as AnyAction
+    )
   }
 
   return (
@@ -51,10 +62,15 @@ const EditUser = () => {
       </Link>
       <FormContainer>
         <h1>Edit User</h1>
+        {loadingUpdate && <Loader />}
+        {error && <Message variant="danger">{error}</Message>}
+        {updated && (
+          <Message variant="successs">User updated succcessfully</Message>
+        )}
         {loadingInfo ? (
           <Loader />
-        ) : error ? (
-          <Message variant="danger">{error}</Message>
+        ) : errorInfo ? (
+          <Message variant="danger">{errorInfo}</Message>
         ) : (
           <Form onSubmit={submitHandler} className="mb-3">
             <Form.Group className="mb-3" controlId="name">

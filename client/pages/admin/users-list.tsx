@@ -54,7 +54,7 @@ const UsersList = () => {
               <th>NAME</th>
               <th>EMAIL</th>
               <th>ADMIN</th>
-              <th></th>
+              <th />
             </tr>
           </thead>
           <tbody>
@@ -70,7 +70,7 @@ const UsersList = () => {
                     <FontAwesomeIcon icon={faTimes} color="red" />
                   )}
                 </td>
-                <td>
+                <td className="d-flex justify-content-around">
                   <Link
                     href={`/admin/user/${encodeURIComponent(user._id)}/edit`}
                   >

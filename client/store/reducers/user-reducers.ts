@@ -8,6 +8,7 @@ import {
   login,
   register,
   updateUserProfile,
+  updateUser,
 } from '../actions/user-actions'
 import Cookies from 'js-cookie'
 import User from '@/interfaces/user'
@@ -112,6 +113,8 @@ interface UserDetails {
   orders: any[]
   loadingOrders: boolean
   errorOrders: string | null
+  loadingUpdate: boolean
+  errorUpdate: string | null
 }
 
 const userDetailsState: UserDetails = {
@@ -122,6 +125,8 @@ const userDetailsState: UserDetails = {
   orders: [],
   loadingOrders: false,
   errorOrders: null,
+  loadingUpdate: false,
+  errorUpdate: null,
 }
 
 export const userDetailsReducer = createSlice({
@@ -182,6 +187,23 @@ export const userDetailsReducer = createSlice({
         ...state,
         loadingInfo: false,
         errorInfo: payload as string,
+      }))
+      .addCase(updateUser.pending, state => ({
+        ...state,
+        loadingUpdate: true,
+        updated: false,
+      }))
+      .addCase(updateUser.fulfilled, (state, { payload }) => ({
+        ...state,
+        loadingUpdate: false,
+        updated: true,
+        userInfo: payload,
+        errorUpdate: null,
+      }))
+      .addCase(updateUser.rejected, (state, { payload }) => ({
+        ...state,
+        loadingUpdate: false,
+        errorUpdate: payload as string,
       }))
   },
 })
