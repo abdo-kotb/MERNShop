@@ -2,7 +2,7 @@ import Loader from '@/components/loader'
 import Message from '@/components/message'
 import {
   getUserOrders,
-  getUserProfile,
+  getUser,
   updateUserProfile,
 } from '@/store/actions/user-actions'
 import { getUserFromStorage } from '@/store/reducers/user-reducers'
@@ -42,7 +42,7 @@ const Profile = () => {
       return
     }
     if (!user?.name) {
-      dispatch(getUserProfile({ id: 'profile' }) as unknown as AnyAction)
+      dispatch(getUser({ id: 'profile' }) as unknown as AnyAction)
       dispatch(getUserOrders() as unknown as AnyAction)
     } else {
       setName(user.name)

@@ -3,7 +3,7 @@ import { HYDRATE } from 'next-redux-wrapper'
 import {
   deleteUser,
   getUserOrders,
-  getUserProfile,
+  getUser,
   getUsers,
   login,
   register,
@@ -136,17 +136,17 @@ export const userDetailsReducer = createSlice({
           ...action.payload.userDetails,
         }
       })
-      .addCase(getUserProfile.pending, state => ({
+      .addCase(getUser.pending, state => ({
         ...state,
         loadingInfo: true,
       }))
-      .addCase(getUserProfile.fulfilled, (state, { payload }) => ({
+      .addCase(getUser.fulfilled, (state, { payload }) => ({
         ...state,
         loadingInfo: false,
         userInfo: payload,
         errorInfo: null,
       }))
-      .addCase(getUserProfile.rejected, (state, { payload }) => ({
+      .addCase(getUser.rejected, (state, { payload }) => ({
         ...state,
         loadingInfo: false,
         errorInfo: payload as string,

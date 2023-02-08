@@ -65,8 +65,8 @@ export const register = createAsyncThunk(
   }
 )
 
-export const getUserProfile = createAsyncThunk(
-  'getUserProfile',
+export const getUser = createAsyncThunk(
+  'getUser',
   async (
     { id }: { id: string },
     {
@@ -87,9 +87,8 @@ export const getUserProfile = createAsyncThunk(
         },
       }
 
-      const { data: user } = await axios.put(
+      const { data: user } = await axios.get(
         `${process.env.API_ROOT}/users/${id}`,
-        {},
         config
       )
 
