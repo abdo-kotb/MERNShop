@@ -3,6 +3,7 @@ import { createWrapper } from 'next-redux-wrapper'
 
 import { cartReducer } from './reducers/cart-reducers'
 import {
+  listAllOrders,
   orderCreateReducer,
   orderDetailsReducer,
 } from './reducers/order-reducers'
@@ -33,6 +34,7 @@ const reducer = combineReducers({
   [userDeleteReducer.name]: userDeleteReducer.reducer,
   [orderCreateReducer.name]: orderCreateReducer.reducer,
   [orderDetailsReducer.name]: orderDetailsReducer.reducer,
+  [listAllOrders.name]: listAllOrders.reducer,
 })
 
 export const store = configureStore({

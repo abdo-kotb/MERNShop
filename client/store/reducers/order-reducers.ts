@@ -1,7 +1,9 @@
+import Order from '@/interfaces/order'
 import { createSlice } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
 import {
   createOrder,
+  getAllOrders,
   getOrderDetails,
   payOrder,
 } from '../actions/order-actions'
@@ -106,6 +108,48 @@ export const orderDetailsReducer = createSlice({
         success: true,
       }))
       .addCase(payOrder.rejected, (state, { payload }) => ({
+        ...state,
+        loading: false,
+        error: payload as string,
+      }))
+  },
+})
+
+interface AllOrders {
+  orders: Order[]
+  loading: boolean
+  error: string | null
+}
+
+const allOrdersState: AllOrders = {
+  orders: [],
+  loading: false,
+  error: null,
+}
+
+export const listAllOrders = createSlice({
+  name: 'listAllOrders',
+  initialState: allOrdersState,
+  reducers: {},
+  extraReducers(builder) {
+    builder
+      .addCase(HYDRATE, (state, action: any) => {
+        return {
+          ...state,
+          ...action.payload.orderDetails,
+        }
+      })
+      .addCase(getAllOrders.pending, state => ({
+        ...state,
+        loading: true,
+      }))
+      .addCase(getAllOrders.fulfilled, (state, { payload }) => ({
+        ...state,
+        loading: false,
+        orders: payload,
+        error: null,
+      }))
+      .addCase(getAllOrders.rejected, (state, { payload }) => ({
         ...state,
         loading: false,
         error: payload as string,
