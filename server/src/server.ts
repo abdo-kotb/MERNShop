@@ -23,7 +23,7 @@ app.use(cors())
 
 app.use(express.json())
 
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.send('API running...')
 })
 
@@ -32,11 +32,15 @@ app.use('/api/users', userRoutes)
 app.use('/api/orders', orderRoutes)
 app.use('/api/upload', uploadRoutes)
 
-app.get('/api/config/paypal', (req, res) =>
+app.get('/api/config/paypal', (_, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)
 )
 
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
+const __dirname = path.resolve()
+app.use(
+  '/uploads',
+  express.static(path.join(__dirname, '/client/public/images'))
+)
 
 app.use(notFound)
 

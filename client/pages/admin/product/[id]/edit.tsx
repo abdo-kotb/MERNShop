@@ -5,17 +5,18 @@ import {
   getProductDetails,
   updateProduct,
 } from '@/store/actions/product-actions'
-import { getUser, updateUser } from '@/store/actions/user-actions'
 import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
 import { AnyAction } from '@reduxjs/toolkit'
+import axios from 'axios'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FormEvent, useEffect, useState } from 'react'
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 
 const EditProduct = () => {
+  const [uploading, setUploading] = useState(false)
   const [price, setPrice] = useState(0)
   const [name, setName] = useState('')
   const [image, setImage] = useState('')
@@ -72,6 +73,33 @@ const EditProduct = () => {
     )
   }
 
+  const uploadFileHandler = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files![0]
+    const formData = new FormData()
+    formData.append('image', file)
+    setUploading(true)
+
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+
+      const { data } = await axios.post(
+        `${process.env.API_ROOT}/upload`,
+        formData,
+        config
+      )
+
+      setImage(data)
+      setUploading(false)
+    } catch (error) {
+      console.error(error)
+      setUploading(false)
+    }
+  }
+
   return (
     <>
       <Link href="/admin/products-list" className="btn btn-dark my-3">
@@ -113,13 +141,17 @@ const EditProduct = () => {
               <Form.Label>Image</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter Image URL"
+                placeholder="Enter Image URL or Upload Image"
                 value={image}
                 onChange={e => {
                   setImage(e.target.value)
                   if (error) setError(null)
                 }}
               />
+              <Form.Group controlId="formFile">
+                <Form.Control onChange={uploadFileHandler} type="file" />
+              </Form.Group>
+              {uploading && <Loader />}
             </Form.Group>
             <Form.Group className="mb-4" controlId="brand">
               <Form.Label>Brand</Form.Label>
