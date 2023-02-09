@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
 import {
   createOrder,
+  deliverOrder,
   getAllOrders,
   getOrderDetails,
   payOrder,
@@ -59,6 +60,9 @@ interface OrderState {
   error: string | null
   success: boolean
   processingPay: boolean
+  delivered: boolean
+  loadingDelivered: boolean
+  errorDelivered: null | string
 }
 
 const orderInitialState: OrderState = {
@@ -67,6 +71,9 @@ const orderInitialState: OrderState = {
   error: null,
   success: false,
   processingPay: false,
+  delivered: false,
+  loadingDelivered: false,
+  errorDelivered: null,
 }
 
 export const orderDetailsReducer = createSlice({
@@ -111,6 +118,22 @@ export const orderDetailsReducer = createSlice({
         ...state,
         loading: false,
         error: payload as string,
+      }))
+      .addCase(deliverOrder.pending, state => ({
+        ...state,
+        delivered: false,
+        loadingDelivered: true,
+      }))
+      .addCase(deliverOrder.fulfilled, state => ({
+        ...state,
+        loadingDelivered: false,
+        errorDelivered: null,
+        delivered: true,
+      }))
+      .addCase(deliverOrder.rejected, (state, { payload }) => ({
+        ...state,
+        loadingDelivered: false,
+        errorDelivered: payload as string,
       }))
   },
 })
