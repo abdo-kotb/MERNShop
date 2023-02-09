@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from 'react-redux'
 
 const EditUser = () => {
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const [isAdmin, setIsAdmin] = useState(false)
   const dispatch = useDispatch()
