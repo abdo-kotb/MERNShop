@@ -1,7 +1,7 @@
 import Loader from '@/components/loader'
 import Message from '@/components/message'
 import CartItem from '@/interfaces/cart-item'
-import { getOrderDetails } from '@/store/actions/order-actions'
+import { deliverOrder, getOrderDetails } from '@/store/actions/order-actions'
 import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
 import { AnyAction } from '@reduxjs/toolkit'
@@ -10,7 +10,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { Card, Col, ListGroup, Row } from 'react-bootstrap'
+import { Button, Card, Col, ListGroup, Row } from 'react-bootstrap'
 import { PayPalScriptProvider } from '@paypal/react-paypal-js'
 import { useDispatch, useSelector } from 'react-redux'
 import PayPalButton from '@/components/paypal-button'
@@ -19,9 +19,16 @@ const SingleOrder = () => {
   const router = useRouter()
   const dispatch = useDispatch()
   const orderId = router.query.id
-  const { loading, order, error, success, processingPay } = useSelector(
-    (state: AppState) => state.orderDetails
-  )
+  const {
+    loading,
+    order,
+    error,
+    success,
+    processingPay,
+    delivered,
+    loadingDelivered,
+  } = useSelector((state: AppState) => state.orderDetails)
+  const { userInfo } = useSelector((state: AppState) => state.userLogin)
   const [clientId, setClientId] = useState('')
 
   useEffect(() => {
@@ -32,21 +39,24 @@ const SingleOrder = () => {
       setClientId(id)
     }
 
-    if (!order || success)
+    if (success || delivered)
       dispatch(getOrderDetails(orderId as string) as unknown as AnyAction)
-    else if (!order.isPaid) {
-      if (!window.paypal) setPayPalID()
+    else if (!order?.isPaid) {
+      setPayPalID()
     }
-  }, [dispatch, success, orderId, order])
+  }, [dispatch, success, orderId, order, delivered])
 
   const addDecimals = (num: number) => (Math.round(num * 100) / 100).toFixed(2)
 
-  const itemsPrice = addDecimals(
-    order.orderItems.reduce(
-      (acc: number, item: CartItem) => acc + item.price * +item.qty,
-      0
+  const itemsPrice =
+    order &&
+    addDecimals(
+      order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0)
     )
-  )
+
+  const deliverHandler = () => {
+    dispatch(deliverOrder(order!._id) as unknown as AnyAction)
+  }
 
   if (loading) return <Loader />
 
@@ -77,7 +87,9 @@ const SingleOrder = () => {
               </p>
               {order.isDelivered ? (
                 <Message variant="success">
-                  Delivered on {new Date(order.deliveredAt).toLocaleString()}
+                  Delivered on{' '}
+                  {order.deliveredAt &&
+                    new Date(order.deliveredAt).toLocaleString()}
                 </Message>
               ) : (
                 <Message variant="danger">Not delivered</Message>
@@ -91,7 +103,7 @@ const SingleOrder = () => {
               </p>
               {order.isPaid ? (
                 <Message variant="success">
-                  Paid on {new Date(order.paidAt).toLocaleString()}
+                  Paid on {new Date(order.paidAt!).toLocaleString()}
                 </Message>
               ) : (
                 <Message variant="danger">Not paid</Message>
@@ -103,7 +115,7 @@ const SingleOrder = () => {
                 <Message>Order is empty</Message>
               ) : (
                 <ListGroup variant="flush">
-                  {order.orderItems.map((item: CartItem) => (
+                  {order.orderItems.map(item => (
                     <ListGroup.Item key={item.product}>
                       <Row>
                         <Col md={1} className="position-relative">
@@ -170,6 +182,19 @@ const SingleOrder = () => {
                       <PayPalButton totalPrice={order.totalPrice} />
                     </PayPalScriptProvider>
                   )}
+                </ListGroup.Item>
+              )}
+
+              {userInfo?.isAdmin && order.isPaid && !order.isDelivered && (
+                <ListGroup.Item>
+                  <Button
+                    type="button"
+                    className="btn w-100"
+                    onClick={deliverHandler}
+                    disabled={loadingDelivered}
+                  >
+                    {loadingDelivered ? <Loader /> : 'Mark as delivered'}
+                  </Button>
                 </ListGroup.Item>
               )}
             </ListGroup>

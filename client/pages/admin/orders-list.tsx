@@ -71,7 +71,7 @@ const OrdersList = () => {
                   )}
                 </td>
                 <td>
-                  <Link href={`/admin/order/${encodeURIComponent(order._id)}`}>
+                  <Link href={`/order/${encodeURIComponent(order._id)}`}>
                     <Button
                       variant={index % 2 === 0 ? 'light' : 'dark'}
                       className="btn-sm"

@@ -2,14 +2,14 @@ import User from './user'
 
 export default interface Order {
   _id: string
-  user?: User
+  user: User
   orderItems: {
     name: string
     qty: number
     image: string
     price: number
     product: string
-  }
+  }[]
   shippingAddress: {
     address: string
     city: string

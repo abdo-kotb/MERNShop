@@ -6,7 +6,7 @@ import { FC } from 'react'
 import { useDispatch } from 'react-redux'
 import Loader from './loader'
 
-const PayPalButton: FC<{ totalPrice: string }> = ({ totalPrice }) => {
+const PayPalButton: FC<{ totalPrice: number }> = ({ totalPrice }) => {
   const dispatch = useDispatch()
   const router = useRouter()
   const [{ isPending }] = usePayPalScriptReducer()

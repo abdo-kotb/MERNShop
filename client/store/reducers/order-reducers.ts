@@ -12,7 +12,7 @@ import {
 interface CreateOrderState {
   loading: boolean
   success: boolean
-  order: any
+  order: Order | null
   error: null | string
 }
 
@@ -55,7 +55,7 @@ export const orderCreateReducer = createSlice({
 })
 
 interface OrderState {
-  order: any
+  order: Order | null
   loading: boolean
   error: string | null
   success: boolean
@@ -91,22 +91,27 @@ export const orderDetailsReducer = createSlice({
       .addCase(getOrderDetails.pending, state => ({
         ...state,
         loading: true,
+        success: false,
+        delivered: false,
       }))
       .addCase(getOrderDetails.fulfilled, (state, { payload }) => ({
         ...state,
         loading: false,
         order: payload,
         error: null,
-        success: false,
+        delivered: false,
       }))
       .addCase(getOrderDetails.rejected, (state, { payload }) => ({
         ...state,
         loading: false,
         error: payload as string,
+        delivered: false,
       }))
       .addCase(payOrder.pending, state => ({
         ...state,
         processingPay: true,
+        success: false,
+        delivered: false,
       }))
       .addCase(payOrder.fulfilled, state => ({
         ...state,
