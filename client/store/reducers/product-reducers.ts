@@ -6,6 +6,7 @@ import {
   deleteProduct,
   getAllProducts,
   getProductDetails,
+  updateProduct,
 } from '../actions/product-actions'
 
 interface CommonState {
@@ -60,12 +61,18 @@ export const productsReducer = createSlice({
 
 interface ProductStateType extends CommonState {
   product: IProduct
+  updated: boolean
+  loadingUpdate: boolean
+  errorUpdate: null | string
 }
 
 const productInitialState: ProductStateType = {
   loading: false,
   product: {} as IProduct,
   error: null,
+  updated: false,
+  loadingUpdate: false,
+  errorUpdate: null,
 }
 
 export const productDetailsReducer = createSlice({
@@ -98,6 +105,28 @@ export const productDetailsReducer = createSlice({
           ...state,
           error: action.payload as string,
           loading: false,
+        }
+      })
+      .addCase(updateProduct.pending, state => {
+        return {
+          ...state,
+          loadingUpdate: true,
+          updated: false,
+        }
+      })
+      .addCase(updateProduct.fulfilled, (state, action) => {
+        return {
+          ...state,
+          loadingUpdate: false,
+          product: action.payload,
+          updated: true,
+        }
+      })
+      .addCase(updateProduct.rejected, (state, action) => {
+        return {
+          ...state,
+          errorUpdate: action.payload as string,
+          loadingUpdate: false,
         }
       })
   },

@@ -1,7 +1,10 @@
 import FormContainer from '@/components/form-container'
 import Loader from '@/components/loader'
 import Message from '@/components/message'
-import { getProductDetails } from '@/store/actions/product-actions'
+import {
+  getProductDetails,
+  updateProduct,
+} from '@/store/actions/product-actions'
 import { getUser, updateUser } from '@/store/actions/user-actions'
 import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
@@ -28,11 +31,15 @@ const EditProduct = () => {
     loading,
     error: reqError,
     product,
+    loadingUpdate,
+    errorUpdate,
+    updated,
   } = useSelector((state: AppState) => state.product)
 
   useEffect(() => {
-    if (!product?.name || product?._id !== productId) {
+    if (!product?.name || product?._id !== productId || updated) {
       dispatch(getProductDetails({ id: productId }) as unknown as AnyAction)
+      if (updated) router.push('/admin/products-list')
     } else {
       setName(product.name)
       setPrice(product.price)
@@ -42,15 +49,27 @@ const EditProduct = () => {
       setCountInStock(product.countInStock)
       setDescription(product.description)
     }
-  }, [productId, product, dispatch])
+  }, [productId, product, dispatch, updated, router])
 
   useEffect(() => {
     if (reqError) setError(reqError)
-  }, [reqError])
+    if (errorUpdate) setError(errorUpdate)
+  }, [reqError, errorUpdate])
 
   const submitHandler = (e: FormEvent) => {
     e.preventDefault()
-    // update product
+    dispatch(
+      updateProduct({
+        _id: productId,
+        name,
+        price,
+        image,
+        brand,
+        category,
+        description,
+        countInStock,
+      }) as unknown as AnyAction
+    )
   }
 
   return (
@@ -60,7 +79,7 @@ const EditProduct = () => {
       </Link>
       <FormContainer>
         <h1>Edit Product</h1>
-        {loading ? (
+        {loading || loadingUpdate ? (
           <Loader />
         ) : error ? (
           <Message variant="danger">{error}</Message>

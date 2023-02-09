@@ -1,3 +1,4 @@
+import IProduct from '@/interfaces/Product'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
@@ -87,6 +88,41 @@ export const createProduct = createAsyncThunk(
       )
 
       return product
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data.message ?? err.message)
+    }
+  }
+)
+
+export const updateProduct = createAsyncThunk(
+  'updateProduct',
+  async (
+    product: IProduct,
+    {
+      rejectWithValue,
+      getState,
+    }: {
+      rejectWithValue: any
+      getState: () => any
+    }
+  ) => {
+    try {
+      const { userInfo } = getState().userLogin
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      }
+
+      const { data: updatedProduct } = await axios.put(
+        `${process.env.API_ROOT}/products/${product._id}`,
+        product,
+        config
+      )
+
+      return updatedProduct
     } catch (err: any) {
       return rejectWithValue(err.response?.data.message ?? err.message)
     }
