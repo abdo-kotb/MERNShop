@@ -12,6 +12,7 @@ import Loader from '@/components/loader'
 import Message from '@/components/message'
 import { getAllProducts } from '@/store/actions/product-actions'
 import { getUserFromStorage } from '@/store/reducers/user-reducers'
+import Paginate from '@/components/paginate'
 
 const Home = () => {
   const { products, loading, error } = useSelector(
@@ -29,13 +30,16 @@ const Home = () => {
       ) : error ? (
         <Message variant="danger">{error}</Message>
       ) : (
-        <Row>
-          {products.map((product: IProduct) => (
-            <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
-              <Product product={product} />
-            </Col>
-          ))}
-        </Row>
+        <>
+          <Row>
+            {products.map((product: IProduct) => (
+              <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
+                <Product product={product} />
+              </Col>
+            ))}
+          </Row>
+          <Paginate />
+        </>
       )}
     </>
   )
@@ -45,11 +49,16 @@ export default Home
 
 export const getServerSideProps = wrapper.getServerSideProps(
   store =>
-    async ({ req }) => {
+    async ({ req, query }) => {
       if (req.cookies.userInfo)
         store.dispatch(getUserFromStorage(JSON.parse(req.cookies.userInfo!)))
 
-      await store.dispatch(getAllProducts() as unknown as AnyAction)
+      await store.dispatch(
+        getAllProducts({
+          keyword: query.keyword as string,
+          pageNum: +query.page! || 1,
+        }) as unknown as AnyAction
+      )
       return { props: {} }
     }
 )

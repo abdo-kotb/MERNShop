@@ -1,6 +1,7 @@
 import FormContainer from '@/components/form-container'
 import Loader from '@/components/loader'
 import Message from '@/components/message'
+import IProduct from '@/interfaces/Product'
 import {
   getProductDetails,
   updateProduct,
@@ -69,7 +70,7 @@ const EditProduct = () => {
         category,
         description,
         countInStock,
-      }) as unknown as AnyAction
+      } as IProduct) as unknown as AnyAction
     )
   }
 

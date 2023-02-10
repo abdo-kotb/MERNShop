@@ -38,7 +38,7 @@ const Order = () => {
   const totalPrice = (+itemsPrice + +shippingPrice + +taxPrice).toFixed(2)
 
   useEffect(() => {
-    if (success) router.push(`/order/${order._id}`)
+    if (success && order) router.push(`/order/${order._id}`)
   }, [success, order, router])
 
   const placeOrderHandler = () => {

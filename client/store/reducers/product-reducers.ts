@@ -17,12 +17,16 @@ interface CommonState {
 
 interface AllProductsType extends CommonState {
   products: IProduct[]
+  pagesCount: number
+  page: number
 }
 
 const allProductsState: AllProductsType = {
   loading: false,
   products: [],
   error: null,
+  pagesCount: 0,
+  page: 1,
 }
 
 export const productsReducer = createSlice({
@@ -47,7 +51,9 @@ export const productsReducer = createSlice({
         return {
           ...state,
           loading: false,
-          products: action.payload,
+          products: action.payload.products,
+          pagesCount: action.payload.pages,
+          page: action.payload.page,
         }
       })
       .addCase(getAllProducts.rejected, (state, action) => {

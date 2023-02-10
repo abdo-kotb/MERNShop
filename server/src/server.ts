@@ -3,6 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import colors from 'colors'
 import morgan from 'morgan'
+import path from 'path'
 
 import connectDB from './config/db.js'
 import productRoutes from './routes/productRoutes.js'
@@ -10,7 +11,6 @@ import userRoutes from './routes/userRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
 import uploadRoutes from './routes/uploadRoutes.js'
 import { errorHandler, notFound } from './middelwares/errorMiddleware.js'
-import path from 'path'
 
 colors.enable()
 

@@ -1,5 +1,6 @@
 import Loader from '@/components/loader'
 import Message from '@/components/message'
+import Paginate from '@/components/paginate'
 import IProduct from '@/interfaces/Product'
 import User from '@/interfaces/user'
 import {
@@ -42,7 +43,13 @@ const ProductsList = () => {
 
   useEffect(() => {
     if (product?._id) router.push(`/admin/product/${product._id}/edit`)
-    else dispatch(getAllProducts() as unknown as AnyAction)
+    else
+      dispatch(
+        getAllProducts({
+          keyword: router.query.keyword as string,
+          pageNum: +router.query.page! || 1,
+        }) as unknown as AnyAction
+      )
   }, [dispatch, successDelete, product, router])
 
   const deleteHandler = (id: IProduct['_id']) => {
@@ -73,47 +80,50 @@ const ProductsList = () => {
       ) : error ? (
         <Message variant="danger">{error}</Message>
       ) : (
-        <Table striped bordered hover responsive className="table-sm">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>NAME</th>
-              <th>PRICE</th>
-              <th>CATEGORY</th>
-              <th>BRAND</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {products.map(product => (
-              <tr key={product._id}>
-                <td>{product._id}</td>
-                <td>{product.name}</td>
-                <td>${product.price}</td>
-                <td>{product.category}</td>
-                <td>{product.brand}</td>
-                <td className="d-flex justify-content-around">
-                  <Link
-                    href={`/admin/product/${encodeURIComponent(
-                      product._id
-                    )}/edit`}
-                  >
-                    <Button variant="light" className="btn-sm">
-                      <FontAwesomeIcon icon={faEdit} />
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="danger"
-                    className="btn-sm"
-                    onClick={() => deleteHandler(product._id)}
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </Button>
-                </td>
+        <>
+          <Table striped bordered hover responsive className="table-sm">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>NAME</th>
+                <th>PRICE</th>
+                <th>CATEGORY</th>
+                <th>BRAND</th>
+                <th />
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {products.map(product => (
+                <tr key={product._id}>
+                  <td>{product._id}</td>
+                  <td>{product.name}</td>
+                  <td>${product.price}</td>
+                  <td>{product.category}</td>
+                  <td>{product.brand}</td>
+                  <td className="d-flex justify-content-around">
+                    <Link
+                      href={`/admin/product/${encodeURIComponent(
+                        product._id
+                      )}/edit`}
+                    >
+                      <Button variant="light" className="btn-sm">
+                        <FontAwesomeIcon icon={faEdit} />
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="danger"
+                      className="btn-sm"
+                      onClick={() => deleteHandler(product._id)}
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <Paginate />
+        </>
       )}
     </>
   )

@@ -3,15 +3,25 @@ import Review from '@/interfaces/Review'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
+interface AllProductsArgs {
+  keyword: string
+  pageNum?: number
+}
+
 export const getAllProducts = createAsyncThunk(
   'getAllProducts',
-  async (keyword: string | undefined = '', { rejectWithValue }) => {
+  async (args: AllProductsArgs | undefined, { rejectWithValue }) => {
+    const keyword = args?.keyword || ''
+    const pageNum = args?.pageNum || 1
+
     try {
       const {
-        data: { products },
-      } = await axios.get(`${process.env.API_ROOT}/products?keyword=${keyword}`)
+        data: { products, pages, page },
+      } = await axios.get(
+        `${process.env.API_ROOT}/products?keyword=${keyword}&page=${pageNum}`
+      )
 
-      return products
+      return { products, pages, page }
     } catch (err: any) {
       return rejectWithValue(err.response?.data.message ?? err.message)
     }
