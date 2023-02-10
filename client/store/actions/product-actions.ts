@@ -5,11 +5,11 @@ import axios from 'axios'
 
 export const getAllProducts = createAsyncThunk(
   'getAllProducts',
-  async (_, { rejectWithValue }) => {
+  async (keyword: string | undefined = '', { rejectWithValue }) => {
     try {
       const {
         data: { products },
-      } = await axios.get(`${process.env.API_ROOT}/products`)
+      } = await axios.get(`${process.env.API_ROOT}/products?keyword=${keyword}`)
 
       return products
     } catch (err: any) {

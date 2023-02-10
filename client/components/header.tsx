@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AppState } from '@/store/store'
 import { NavDropdown } from 'react-bootstrap'
 import { logout } from '@/store/reducers/user-reducers'
+import SearchBox from './search-box'
 
 const Header = () => {
   const dispatch = useDispatch()
@@ -24,6 +25,7 @@ const Header = () => {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
+            <SearchBox />
             <Nav className="ms-auto">
               <Nav.Link as={Link} href="/cart">
                 <FontAwesomeIcon className="me-1" icon={faShoppingCart} />
