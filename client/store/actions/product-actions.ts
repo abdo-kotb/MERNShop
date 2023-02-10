@@ -178,3 +178,29 @@ export const createProductReview = createAsyncThunk(
     }
   }
 )
+
+export const getTopProducts = createAsyncThunk(
+  'getTopProducts',
+  async (
+    _,
+    {
+      rejectWithValue,
+      getState,
+    }: {
+      rejectWithValue: any
+      getState: () => any
+    }
+  ) => {
+    try {
+      const { userInfo } = getState().userLogin
+
+      const { data: products } = await axios.get(
+        `${process.env.API_ROOT}/products/top`
+      )
+
+      return products
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data.message ?? err.message)
+    }
+  }
+)

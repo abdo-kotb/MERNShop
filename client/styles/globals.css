@@ -19,3 +19,14 @@ h3 {
 .rating span {
   margin: 0.1rem;
 }
+
+.carousel-item.active,
+.carousel-item-start,
+.carousel-item-next {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.carousel-item.active {
+  cursor: pointer;
+}

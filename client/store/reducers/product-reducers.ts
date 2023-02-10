@@ -7,6 +7,7 @@ import {
   deleteProduct,
   getAllProducts,
   getProductDetails,
+  getTopProducts,
   updateProduct,
 } from '../actions/product-actions'
 
@@ -252,6 +253,52 @@ export const productReviewCreateReducer = createSlice({
         }
       })
       .addCase(createProductReview.rejected, (state, action) => {
+        return {
+          ...state,
+          error: action.payload as string,
+          loading: false,
+        }
+      })
+  },
+})
+
+interface TopProducts extends CommonState {
+  products: IProduct[]
+}
+
+const topProductsState: TopProducts = {
+  loading: false,
+  error: null,
+  products: [],
+}
+
+export const topProductsReducer = createSlice({
+  name: 'topProducts',
+  initialState: topProductsState,
+  reducers: {},
+  extraReducers: builder => {
+    builder
+      .addCase(HYDRATE, (state, action: any) => {
+        return {
+          ...state,
+          ...action.payload.topProducts,
+        }
+      })
+      .addCase(getTopProducts.pending, state => {
+        return {
+          ...state,
+          loading: true,
+        }
+      })
+      .addCase(getTopProducts.fulfilled, (state, { payload }) => {
+        return {
+          ...state,
+          loading: false,
+          products: payload,
+          error: '',
+        }
+      })
+      .addCase(getTopProducts.rejected, (state, action) => {
         return {
           ...state,
           error: action.payload as string,

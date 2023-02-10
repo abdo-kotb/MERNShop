@@ -13,14 +13,24 @@ import Message from '@/components/message'
 import { getAllProducts } from '@/store/actions/product-actions'
 import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import Paginate from '@/components/paginate'
+import { useRouter } from 'next/router'
+import ProductsCarousel from '@/components/products-carousel'
 
 const Home = () => {
+  const router = useRouter()
+  const { keyword } = router.query
   const { products, loading, error } = useSelector(
     (state: AppState) => state.products
   )
 
   return (
     <>
+      {!keyword && (
+        <>
+          <h2>Top Rated Products</h2>
+          <ProductsCarousel />
+        </>
+      )}
       <Head>
         <title>MERNShop</title>
       </Head>
