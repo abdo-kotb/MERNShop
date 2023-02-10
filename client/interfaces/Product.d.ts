@@ -1,3 +1,5 @@
+import Review from './Review'
+
 export default interface IProduct {
   _id: string
   name: string
@@ -9,5 +11,5 @@ export default interface IProduct {
   countInStock: number
   rating?: number
   numReviews?: number
-  reviews?: string[]
+  reviews?: Review[]
 }

@@ -1,4 +1,5 @@
 import IProduct from '@/interfaces/Product'
+import Review from '@/interfaces/Review'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
@@ -123,6 +124,45 @@ export const updateProduct = createAsyncThunk(
       )
 
       return updatedProduct
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data.message ?? err.message)
+    }
+  }
+)
+
+export const createProductReview = createAsyncThunk(
+  'createProductReview',
+  async (
+    {
+      productId,
+      review,
+    }: {
+      productId: string
+      review: Review
+    },
+    {
+      rejectWithValue,
+      getState,
+    }: {
+      rejectWithValue: any
+      getState: () => any
+    }
+  ) => {
+    try {
+      const { userInfo } = getState().userLogin
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      }
+
+      await axios.post(
+        `${process.env.API_ROOT}/products/${productId}/reviews`,
+        review,
+        config
+      )
     } catch (err: any) {
       return rejectWithValue(err.response?.data.message ?? err.message)
     }

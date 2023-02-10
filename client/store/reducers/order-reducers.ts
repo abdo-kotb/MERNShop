@@ -164,7 +164,7 @@ export const listAllOrders = createSlice({
       .addCase(HYDRATE, (state, action: any) => {
         return {
           ...state,
-          ...action.payload.orderDetails,
+          ...action.payload.listAllOrders,
         }
       })
       .addCase(getAllOrders.pending, state => ({

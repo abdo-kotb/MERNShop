@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
 import {
   createProduct,
+  createProductReview,
   deleteProduct,
   getAllProducts,
   getProductDetails,
@@ -208,6 +209,43 @@ export const productCreateReducer = createSlice({
         }
       })
       .addCase(createProduct.rejected, (state, action) => {
+        return {
+          ...state,
+          error: action.payload as string,
+          loading: false,
+        }
+      })
+  },
+})
+
+export const productReviewCreateReducer = createSlice({
+  name: 'createReview',
+  initialState: { loading: false, success: false, error: '' },
+  reducers: {},
+  extraReducers: builder => {
+    builder
+      .addCase(HYDRATE, (state, action: any) => {
+        return {
+          ...state,
+          ...action.payload.createReview,
+        }
+      })
+      .addCase(createProductReview.pending, state => {
+        return {
+          ...state,
+          loading: true,
+          success: false,
+        }
+      })
+      .addCase(createProductReview.fulfilled, state => {
+        return {
+          ...state,
+          loading: false,
+          success: true,
+          error: '',
+        }
+      })
+      .addCase(createProductReview.rejected, (state, action) => {
         return {
           ...state,
           error: action.payload as string,
