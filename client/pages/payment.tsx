@@ -6,6 +6,7 @@ import {
 } from '@/store/reducers/cart-reducers'
 import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { FormEvent, useState } from 'react'
 import { Button, Col, Form } from 'react-bootstrap'
@@ -25,30 +26,35 @@ const Payment = () => {
   }
 
   return (
-    <FormContainer>
-      <CheckoutSteps step1 step2 step3 />
-      <h1>Payment</h1>
-      <Form onSubmit={submitHandler}>
-        <Form.Group className="mb-4">
-          <Form.Label as="legend">Select Method</Form.Label>
-          <Col>
-            <Form.Check
-              type="radio"
-              label="PayPal or Credit Card"
-              id="PayPal"
-              name="paymentMethod"
-              value="paypal"
-              checked
-              onChange={e => setPaymentMethod(e.target.value)}
-            />
-          </Col>
-        </Form.Group>
+    <>
+      <Head>
+        <title>Payment | MERNShop</title>
+      </Head>
+      <FormContainer>
+        <CheckoutSteps step1 step2 step3 />
+        <h1>Payment</h1>
+        <Form onSubmit={submitHandler}>
+          <Form.Group className="mb-4">
+            <Form.Label as="legend">Select Method</Form.Label>
+            <Col>
+              <Form.Check
+                type="radio"
+                label="PayPal or Credit Card"
+                id="PayPal"
+                name="paymentMethod"
+                value="paypal"
+                checked
+                onChange={e => setPaymentMethod(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
 
-        <Button type="submit" variant="primary">
-          Continue
-        </Button>
-      </Form>
-    </FormContainer>
+          <Button type="submit" variant="primary">
+            Continue
+          </Button>
+        </Form>
+      </FormContainer>
+    </>
   )
 }
 

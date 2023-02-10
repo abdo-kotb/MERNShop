@@ -5,6 +5,7 @@ import { getUser, updateUser } from '@/store/actions/user-actions'
 import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
 import { AnyAction } from '@reduxjs/toolkit'
+import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FormEvent, useEffect, useState } from 'react'
@@ -56,6 +57,10 @@ const EditUser = () => {
 
   return (
     <>
+      <Head>
+        <title>Edit User | MERNShop</title>
+      </Head>
+
       <Link href="/admin/users-list" className="btn btn-dark my-3">
         Go Back
       </Link>

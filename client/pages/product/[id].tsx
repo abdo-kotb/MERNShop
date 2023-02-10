@@ -18,6 +18,7 @@ import {
 } from '@/store/actions/product-actions'
 import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import Review from '@/interfaces/Review'
+import Head from 'next/head'
 
 const Product = () => {
   const [qty, setQty] = useState(1)
@@ -46,8 +47,7 @@ const Product = () => {
   }, [success])
 
   useEffect(() => {
-    if (productId)
-      dispatch(getProductDetails({ id: productId }) as unknown as AnyAction)
+    dispatch(getProductDetails({ id: productId }) as unknown as AnyAction)
   }, [productId, dispatch, success])
 
   const addToCartHandler = () => {
@@ -70,6 +70,10 @@ const Product = () => {
 
   return (
     <>
+      <Head>
+        <title>{product.name}</title>
+        <meta name="description" content={product.description} />
+      </Head>
       <Link className="btn btn-light my-3" href="/">
         Go back
       </Link>
@@ -81,7 +85,11 @@ const Product = () => {
         <>
           <Row>
             <Col md={6} className="position-relative">
-              <Image src={product.image} alt={product.name} fill />
+              <Image
+                src={product.image.replace('\\', '/')}
+                alt={product.name}
+                fill
+              />
             </Col>
             <Col md={3}>
               <ListGroup variant="flush">
@@ -227,9 +235,14 @@ export default Product
 
 export const getServerSideProps = wrapper.getServerSideProps(
   store =>
-    async ({ req }) => {
+    async ({ req, query }) => {
       if (req.cookies.userInfo)
         store.dispatch(getUserFromStorage(JSON.parse(req.cookies.userInfo!)))
+
+      store.dispatch(
+        getProductDetails({ id: query.id as string }) as unknown as AnyAction
+      )
+
       return { props: {} }
     }
 )

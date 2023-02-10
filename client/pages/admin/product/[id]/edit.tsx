@@ -10,6 +10,7 @@ import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
 import { AnyAction } from '@reduxjs/toolkit'
 import axios from 'axios'
+import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
@@ -103,6 +104,10 @@ const EditProduct = () => {
 
   return (
     <>
+      <Head>
+        <title>Edit Product | MERNShop</title>
+      </Head>
+
       <Link href="/admin/products-list" className="btn btn-dark my-3">
         Go Back
       </Link>

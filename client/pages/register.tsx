@@ -5,6 +5,7 @@ import { register } from '@/store/actions/user-actions'
 import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import { AppState, wrapper } from '@/store/store'
 import { AnyAction } from '@reduxjs/toolkit'
+import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FormEvent, useEffect, useState } from 'react'
@@ -42,73 +43,78 @@ const Register = () => {
   }
 
   return (
-    <FormContainer>
-      <h1>Sign Up</h1>
-      {error && <Message variant="danger">{error}</Message>}
-      {loading && <Loader />}
-      <Form onSubmit={submitHandler} className="mb-3">
-        <Form.Group className="mb-3" controlId="name">
-          <Form.Label>Name</Form.Label>
-          <Form.Control
-            type="name"
-            placeholder="Enter Name"
-            value={name}
-            onChange={e => {
-              setName(e.target.value)
-              if (error) setError(null)
-            }}
-          />
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="email">
-          <Form.Label>Email Address</Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="Enter Email"
-            value={email}
-            onChange={e => {
-              setEmail(e.target.value)
-              if (error) setError(null)
-            }}
-          />
-        </Form.Group>
-        <Form.Group className="mb-4" controlId="password">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Enter Password"
-            value={password}
-            onChange={e => {
-              setPassword(e.target.value)
-              if (error) setError(null)
-            }}
-          />
-        </Form.Group>
-        <Form.Group className="mb-4" controlId="confirmPassword">
-          <Form.Label>Confirm Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={e => {
-              setConfirmPassword(e.target.value)
-              if (error) setError(null)
-            }}
-          />
-        </Form.Group>
-        <Button type="submit" variant="primary">
-          Register
-        </Button>
-      </Form>
+    <>
+      <Head>
+        <title>Register | MERNShop</title>
+      </Head>
+      <FormContainer>
+        <h1>Sign Up</h1>
+        {error && <Message variant="danger">{error}</Message>}
+        {loading && <Loader />}
+        <Form onSubmit={submitHandler} className="mb-3">
+          <Form.Group className="mb-3" controlId="name">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              type="name"
+              placeholder="Enter Name"
+              value={name}
+              onChange={e => {
+                setName(e.target.value)
+                if (error) setError(null)
+              }}
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="email">
+            <Form.Label>Email Address</Form.Label>
+            <Form.Control
+              type="email"
+              placeholder="Enter Email"
+              value={email}
+              onChange={e => {
+                setEmail(e.target.value)
+                if (error) setError(null)
+              }}
+            />
+          </Form.Group>
+          <Form.Group className="mb-4" controlId="password">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Enter Password"
+              value={password}
+              onChange={e => {
+                setPassword(e.target.value)
+                if (error) setError(null)
+              }}
+            />
+          </Form.Group>
+          <Form.Group className="mb-4" controlId="confirmPassword">
+            <Form.Label>Confirm Password</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={e => {
+                setConfirmPassword(e.target.value)
+                if (error) setError(null)
+              }}
+            />
+          </Form.Group>
+          <Button type="submit" variant="primary">
+            Register
+          </Button>
+        </Form>
 
-      <Row className="py-3">
-        <Col>
-          Have an account?{' '}
-          <Link href={redirect ? `/login?redirect=${redirect}` : '/login'}>
-            Login
-          </Link>
-        </Col>
-      </Row>
-    </FormContainer>
+        <Row className="py-3">
+          <Col>
+            Have an account?{' '}
+            <Link href={redirect ? `/login?redirect=${redirect}` : '/login'}>
+              Login
+            </Link>
+          </Col>
+        </Row>
+      </FormContainer>
+    </>
   )
 }
 

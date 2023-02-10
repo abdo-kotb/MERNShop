@@ -15,6 +15,7 @@ import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import Paginate from '@/components/paginate'
 import { useRouter } from 'next/router'
 import ProductsCarousel from '@/components/products-carousel'
+import Link from 'next/link'
 
 const Home = () => {
   const router = useRouter()
@@ -25,15 +26,27 @@ const Home = () => {
 
   return (
     <>
-      {!keyword && (
+      <Head>
+        <title>Welcome to MERNShop | Home</title>
+        <meta
+          name="description"
+          content="best eCommerce website in MERN, Next.js, Redux"
+        />
+        <meta
+          name="keywords"
+          content="eCommerce, react, next, website, redux, mern, node, express, mongodb"
+        />
+      </Head>
+      {!keyword ? (
         <>
           <h2>Top Rated Products</h2>
           <ProductsCarousel />
         </>
+      ) : (
+        <Link href="/" className="btn btn-dark">
+          Go back
+        </Link>
       )}
-      <Head>
-        <title>MERNShop</title>
-      </Head>
       <h1>Latest Products</h1>
       {loading ? (
         <Loader />
