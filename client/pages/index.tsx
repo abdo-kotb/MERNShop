@@ -10,7 +10,7 @@ import { Row, Col } from 'react-bootstrap'
 import Product from '@/components/product'
 import Loader from '@/components/loader'
 import Message from '@/components/message'
-import { getAllProducts } from '@/store/actions/product-actions'
+import { getAllProducts, getTopProducts } from '@/store/actions/product-actions'
 import { getUserFromStorage } from '@/store/reducers/user-reducers'
 import Paginate from '@/components/paginate'
 import { useRouter } from 'next/router'
@@ -82,6 +82,8 @@ export const getServerSideProps = wrapper.getServerSideProps(
           pageNum: +query.page! || 1,
         }) as unknown as AnyAction
       )
+
+      await store.dispatch(getTopProducts() as unknown as AnyAction)
       return { props: {} }
     }
 )

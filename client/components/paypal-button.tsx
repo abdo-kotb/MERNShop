@@ -29,7 +29,7 @@ const PayPalButton: FC<{ totalPrice: number }> = ({ totalPrice }) => {
         return actions.order.create({
           purchase_units: [
             {
-              amount: { value: totalPrice },
+              amount: { value: totalPrice.toString() },
             },
           ],
         })

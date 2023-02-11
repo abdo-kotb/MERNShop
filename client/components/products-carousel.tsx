@@ -1,35 +1,26 @@
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { AnyAction } from '@reduxjs/toolkit'
+import { useSelector } from 'react-redux'
 import { AppState } from '@/store/store'
 
 import { Carousel } from 'react-bootstrap'
 
-import { getTopProducts } from '@/store/actions/product-actions'
 import Loader from './loader'
 import Message from './message'
-import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
 const ProductsCarousel = () => {
-  const dispatch = useDispatch()
   const router = useRouter()
 
   const { products, loading, error } = useSelector(
     (state: AppState) => state.topProducts
   )
 
-  useEffect(() => {
-    dispatch(getTopProducts() as unknown as AnyAction)
-  }, [dispatch])
-
   if (loading) return <Loader />
 
   if (error) return <Message variant="danger">{error}</Message>
 
   return (
-    <Carousel pause="hover" className="bg-dark">
+    <Carousel pause="hover" className="bg-dark mb-5 mt-4">
       {products.map(product => (
         <Carousel.Item
           className="pb-5"
