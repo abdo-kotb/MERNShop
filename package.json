@@ -7,10 +7,15 @@
   "scripts": {
     "start": "node server/dist/server.js",
     "dev": "concurrently \"tsc --watch\" \"nodemon -q server/dist/server.js\"",
-    "build": "tsc",
+    "build": "rimraf server/dist && tsc",
     "data:import": "node server/dist/seeders",
     "data:destroy": "node server/dist/seeders -d"
   },
+  "pre-commit": [
+    "ts.check",
+    "build",
+    "add-build"
+  ],
   "author": "Abdulrhman Kotb",
   "license": "ISC",
   "dependencies": {
@@ -23,7 +28,9 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.9.0",
     "morgan": "^1.10.0",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "pre-commit": "^1.2.2",
+    "rimraf": "^4.1.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
