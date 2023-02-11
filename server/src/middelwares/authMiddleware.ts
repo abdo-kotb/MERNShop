@@ -2,7 +2,7 @@ import { NextFunction, Response } from 'express'
 import asyncHandler from 'express-async-handler'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 
-import User from '../models/UserModel.js'
+import User from '../models/userModel.js'
 import { UserReq } from '../types.js'
 
 const protect = asyncHandler(async (req: UserReq, res, next) => {
