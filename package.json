@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server/dist/server.js",
     "dev": "concurrently \"tsc --watch\" \"nodemon -q server/dist/server.js\"",
-    "build": "rimraf server/dist && tsc",
+    "build": "rimraf server/dist && tsc && npm start",
     "data:import": "node server/dist/seeders",
     "data:destroy": "node server/dist/seeders -d"
   },
