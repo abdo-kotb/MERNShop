@@ -11,11 +11,6 @@
     "data:import": "node server/dist/seeders",
     "data:destroy": "node server/dist/seeders -d"
   },
-  "pre-commit": [
-    "ts.check",
-    "build",
-    "add-build"
-  ],
   "author": "Abdulrhman Kotb",
   "license": "ISC",
   "dependencies": {
