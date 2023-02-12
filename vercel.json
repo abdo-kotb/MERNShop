@@ -8,6 +8,7 @@
     }
   ],
   "buildCommand": "npm run build",
+  "outputDirectory": "server/dist",
   "routes": [
     {
       "src": "/(.*)",
