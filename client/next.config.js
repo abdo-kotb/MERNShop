@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    API_ROOT: 'https://mern-shop-1xoh.onrender.com/',
+    API_ROOT: 'https://mern-shop-1xoh.onrender.com/api',
   },
 }
 
